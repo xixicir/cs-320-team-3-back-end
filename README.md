@@ -42,7 +42,7 @@ curl -X POST  "http://127.0.0.1:8080/account/create" \
                            -d last_name=Doe
 
 curl -X POST  "http://127.0.0.1:8080/account/login" \
-                          -d email_address=jason.bourne@gmail.com \
+                          -d email_address=john.doe@gmail.com \
                            -d password=passwordThis1234
 
 curl -H "Authorization: Bearer TOKEN_HERE" \
