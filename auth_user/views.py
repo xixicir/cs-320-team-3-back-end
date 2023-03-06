@@ -57,3 +57,11 @@ class VerifyAccount(APIView):
         success, user, response = check_auth(request)
         status = 200 if success else 500
         return JsonResponse(response, status=status)
+
+class AddEmployee(APIView):
+    def post(self, request):
+        pass
+
+class RemoveEmployee(APIView):
+    def post(self, request):
+        pass
