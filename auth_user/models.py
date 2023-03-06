@@ -8,7 +8,13 @@ class CustomAccount(AbstractUser):
     company = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+
+    # TODO - api calls in views.py for managers to assign employees this field (given email addresses)
+    # add_employees, remove_employees (change .manager fields)
+    manager = models.ForeignKey('CustomAccount', on_delete=models.CASCADE, blank=True, null=True) 
+    
     email_address = models.EmailField(max_length=50, unique=True)
+
     objects = CustomUserManager()
     USERNAME_FIELD = "email_address"
     REQUIRED_FIELDS = ["company", "first_name", "last_name"]
