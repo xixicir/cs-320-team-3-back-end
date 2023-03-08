@@ -3,8 +3,11 @@ from rest_framework.authtoken.models import Token
 from auth_user.models import CustomAccount
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login
-
+import json
 from auth_user.utils import guarantee_auth
+from functools import reduce
+import operator
+from django.db.models import Q
 
 
 class CreateAccount(APIView):
@@ -77,20 +80,53 @@ class VerifyAccount(APIView):
 class AddEmployees(APIView):
     @guarantee_auth
     def post(self, request, user: CustomAccount):
-        return JsonResponse(
-            {
-                "login_success": True,
-            },
-            status=200,
-        )
+        request_params = request.POST.dict()
+        return map_users(request_params, user)
 
 
 class RemoveEmployees(APIView):
     @guarantee_auth
     def post(self, request, user: CustomAccount):
+        request_params = request.POST.dict()
+        return map_users(request_params, None)
+
+
+class GetEmployees(APIView):
+    @guarantee_auth
+    def get(self, request, user: CustomAccount):
+        list_employees: [CustomAccount] = CustomAccount.objects.filter(manager=user)
+
         return JsonResponse(
             {
-                "login_success": True,
+                "list_employees": list(map(lambda u: u.email_address, list_employees)),
             },
             status=200,
         )
+
+
+def map_users(request_params, val):
+    list_emails = json.loads(request_params.get("list_emails", "[]"))
+    if not list_emails:
+        return JsonResponse(
+            {
+                "success": False,
+                "errors": "No list_emails field in request"
+            },
+            status=500,
+        )
+
+    # TODO: add filter for company
+    list_possible: [CustomAccount] = CustomAccount.objects.filter(
+        reduce(operator.or_, (Q(email_address__contains=x) for x in list_emails))
+    )
+
+    for employee in list_possible:
+        employee.manager = val
+        employee.save()
+
+    return JsonResponse(
+        {
+            "success": True,
+        },
+        status=200,
+    )

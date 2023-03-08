@@ -8,7 +8,7 @@ def guarantee_auth(f):
         if not success:
             return JsonResponse(
                 {
-                    "errors": "Not Authenticated: token invalid",
+                    "errors": "Not Authenticated or Token invalid",
                 },
                 status=401,
             )
