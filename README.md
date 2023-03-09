@@ -47,4 +47,15 @@ curl -X POST  "http://127.0.0.1:8080/account/login" \
 
 curl -H "Authorization: Bearer TOKEN_HERE" \
                 "http://127.0.0.1:8080/account/verify"
+
+curl -X POST "http://127.0.0.1:8080/manager/add" \
+                -H "Authorization: Bearer TOKEN_HERE" \
+                -d list_emails='["other.person@gmail.com"]'
+
+curl -X POST "http://127.0.0.1:8080/manager/remove" \
+                -H "Authorization: Bearer TOKEN_HERE" \
+                -d list_emails='["other.person@gmail.com"]'
+
+curl -X POST "http://127.0.0.1:8080/manager/get" \
+                -H "Authorization: Bearer TOKEN_HERE" 
 ```
