@@ -1,5 +1,8 @@
+from typing import List
+
 from auth_user.authentication import check_auth
 from django.http import JsonResponse
+from auth_user.models import CustomAccount
 
 
 def guarantee_auth(f):
@@ -17,3 +20,8 @@ def guarantee_auth(f):
             return f(*args, user=user)
 
     return check_for_auth
+
+
+# TODO: account for transitive (get employees of employees)
+def get_employees(user) -> List[CustomAccount]:
+    return CustomAccount.objects.filter(manager=user)

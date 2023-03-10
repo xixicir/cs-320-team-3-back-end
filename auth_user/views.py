@@ -4,7 +4,7 @@ from auth_user.models import CustomAccount
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login
 import json
-from auth_user.utils import guarantee_auth
+from auth_user.utils import guarantee_auth, get_employees
 from functools import reduce
 import operator
 from django.db.models import Q
@@ -94,7 +94,7 @@ class RemoveEmployees(APIView):
 class GetEmployees(APIView):
     @guarantee_auth
     def get(self, request, user: CustomAccount):
-        list_employees: [CustomAccount] = CustomAccount.objects.filter(manager=user)
+        list_employees = get_employees(user)
 
         return JsonResponse(
             {
