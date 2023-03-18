@@ -22,6 +22,14 @@ def guarantee_auth(f):
     return check_for_auth
 
 
-# TODO: account for transitive (get employees of employees)
 def get_employees(user) -> List[CustomAccount]:
-    return CustomAccount.objects.filter(manager=user)
+    list_init = [user]
+    list_employees = []
+
+    while list_init:
+        cur_user = list_init.pop()
+        cur_employees = CustomAccount.objects.filter(manager=cur_user)
+        list_employees.extend(cur_employees)
+        list_init.extend(cur_employees)
+
+    return list_employees

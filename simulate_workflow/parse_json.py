@@ -14,15 +14,14 @@ def get_time_files():
     return glob(f"{BASE_DIR}/*-entries.json")
 
 
-def get_dicts(list_files):
+def get_dicts(list_files, limit=100):
     lst_dts = list()
     for fname in list_files:
         with open(fname, "r") as f:
             lst_this = json.load(f)
-            lst_dts.extend(lst_this)
+            lst_dts.extend(lst_this[:limit])
     return lst_dts
 
 
-# print(get_dicts(get_employee_files())[:2])
-# print(get_dicts(get_time_files())[:2])
-
+def get_all_dicts(limit):
+    return get_dicts(get_employee_files(), limit), get_dicts(get_time_files(), limit)

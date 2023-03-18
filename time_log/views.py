@@ -6,15 +6,29 @@ from auth_user.utils import get_employees
 from time_log.models import TimeEntry
 from rest_framework.views import APIView
 from auth_user.utils import guarantee_auth
-from datetime import date
+from datetime import datetime, date
 
 
 class LogTime(APIView):
     @guarantee_auth
     def post(self, request, user: CustomAccount):
+        request_params = request.POST.dict()
+
+        try:
+            dt_logged = date.today() if "date_logged" not in request_params else \
+                datetime.strptime(request_params["date_logged"], "%Y-%m-%d")
+        except ValueError:
+            return JsonResponse(
+                {
+                    "log_created": False,
+                    "errors": "date_logged is not in correct format (yyyy-mm-dd)",
+                },
+                status=500,
+            )
+
         duplicate_logs = TimeEntry.objects.filter(
             user=user,
-            date_logged=date.today()
+            date_logged=dt_logged
         )
         if duplicate_logs.exists():
             return JsonResponse(
@@ -25,7 +39,6 @@ class LogTime(APIView):
                 status=500,
             )
 
-        request_params = request.POST.dict()
         if "num_hours" not in request_params:
             return JsonResponse(
                 {
@@ -35,7 +48,10 @@ class LogTime(APIView):
                 status=500,
             )
 
-        cur_entry = TimeEntry(user=user, pay_rate=user.pay_rate, num_hours=request_params["num_hours"])
+        cur_entry = TimeEntry(user=user,
+                              pay_rate=user.pay_rate,
+                              num_hours=request_params["num_hours"],
+                              date_logged=dt_logged)
         cur_entry.save()
 
         return JsonResponse(

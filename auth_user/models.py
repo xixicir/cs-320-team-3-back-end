@@ -4,6 +4,7 @@ from auth_user.managers import CustomUserManager
 
 
 class CustomAccount(AbstractUser):
+    # TODO: add other fields included in json files (role name, startDate, ...)
     username = None
     company = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
