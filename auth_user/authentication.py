@@ -26,19 +26,31 @@ def check_auth(request):
     tokenAuth = CustomTokenAuthentication()
     try:
         auth_tok: str = request.headers.get("Authorization")
-        assert(auth_tok.startswith("Bearer"))
+        assert auth_tok.startswith("Bearer")
         user, token_or_error = tokenAuth.authenticate_credentials(auth_tok.split()[-1])
     except KeyError as e:
-        return False, None, {
-            "logged_in": False,
-            "errors": f'BadRequest: Missing Key, {e}',
-        }
+        return (
+            False,
+            None,
+            {
+                "logged_in": False,
+                "errors": f"BadRequest: Missing Key, {e}",
+            },
+        )
     if user:
-        return True, user, {
-            "logged_in": True,
-        }
+        return (
+            True,
+            user,
+            {
+                "logged_in": True,
+            },
+        )
     else:
-        return False, user, {
-            "logged_in": False,
-            "errors": token_or_error,
-        }
+        return (
+            False,
+            user,
+            {
+                "logged_in": False,
+                "errors": token_or_error,
+            },
+        )

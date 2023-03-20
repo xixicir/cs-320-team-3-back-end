@@ -24,9 +24,9 @@ def register_user(user_dt):
         "pay_rate": get_random_rate(),
         "company": user_dt["companyName"],
         "first_name": user_dt["firstName"],
-        "last_name": user_dt["lastName"]
+        "last_name": user_dt["lastName"],
     }
-    requests.post(f'{HOST_IP}/account/create', data=data)
+    requests.post(f"{HOST_IP}/account/create", data=data)
 
 
 def login_user(user_dt):
@@ -34,7 +34,7 @@ def login_user(user_dt):
         "email_address": user_dt["email"],
         "password": user_dt["password"],
     }
-    resp = requests.post(f'{HOST_IP}/account/login', data=data)
+    resp = requests.post(f"{HOST_IP}/account/login", data=data)
     resp.raise_for_status()
     return resp.json()["token"]
 
@@ -44,27 +44,21 @@ def add_employees(manager_token, list_employees):
         return
 
     headers = {
-        'Authorization': f'Bearer {manager_token}',
+        "Authorization": f"Bearer {manager_token}",
     }
 
-    data = {
-        "list_emails": json.dumps(list_employees)
-
-    }
-    requests.post(f'{HOST_IP}/manager/add', headers=headers, data=data)
+    data = {"list_emails": json.dumps(list_employees)}
+    requests.post(f"{HOST_IP}/manager/add", headers=headers, data=data)
 
 
 def add_time_log(usr_token, dt_worked, hours_worked):
     headers = {
-        'Authorization': f'Bearer {usr_token}',
+        "Authorization": f"Bearer {usr_token}",
     }
 
-    data = {
-        "num_hours": hours_worked,
-        "date_logged": dt_worked
-    }
+    data = {"num_hours": hours_worked, "date_logged": dt_worked}
 
-    requests.post(f'{HOST_IP}/time/log', headers=headers, data=data)
+    requests.post(f"{HOST_IP}/time/log", headers=headers, data=data)
 
 
 def add_all_info():
@@ -76,13 +70,24 @@ def add_all_info():
         list_tokens.append(login_user(usr))
 
     for i, usr in enumerate(tqdm(list_users, desc="Assigning managers")):
-        employees = [dt["email"] for dt in list_users if dt.get("managerId", "") == usr["employeeId"] and
-                     dt["companyName"] == usr["companyName"]]
+        employees = [
+            dt["email"]
+            for dt in list_users
+            if dt.get("managerId", "") == usr["employeeId"]
+            and dt["companyName"] == usr["companyName"]
+        ]
         add_employees(list_tokens[i], employees)
 
     for i, usr in enumerate(tqdm(list_users, desc="Adding time logs")):
-        time_entry = next((item for item in list_times if item["employeeId"] == usr["employeeId"] and
-                          item["companyId"] == usr["companyId"]), None)
+        time_entry = next(
+            (
+                item
+                for item in list_times
+                if item["employeeId"] == usr["employeeId"]
+                and item["companyId"] == usr["companyId"]
+            ),
+            None,
+        )
         if not time_entry:
             continue
         for t_entry in time_entry["timeEntries"]:
@@ -96,13 +101,18 @@ def add_all_info():
                     case "hoursWorked":
                         hrs_worked = t_entry["hoursWorked"]
                     case "clockedIn":
-                        FMT = '%H:%M:%S'
-                        tdelta = datetime.strptime(t_entry["clockedOut"], FMT) - \
-                                 datetime.strptime(t_entry["clockedIn"], FMT)
+                        FMT = "%H:%M:%S"
+                        tdelta = datetime.strptime(
+                            t_entry["clockedOut"], FMT
+                        ) - datetime.strptime(t_entry["clockedIn"], FMT)
                         hrs_worked += get_hour_diff(tdelta)
                     case "clockedInEpochMillisecond":
-                        dt_in = datetime.fromtimestamp(int(t_entry["clockedInEpochMillisecond"]) / 1000.0)
-                        dt_out = datetime.fromtimestamp(int(t_entry["clockedOutEpochMillisecond"]) / 1000.0)
+                        dt_in = datetime.fromtimestamp(
+                            int(t_entry["clockedInEpochMillisecond"]) / 1000.0
+                        )
+                        dt_out = datetime.fromtimestamp(
+                            int(t_entry["clockedOutEpochMillisecond"]) / 1000.0
+                        )
                         hrs_worked = get_hour_diff(dt_out - dt_in)
                         dt_worked = dt_in.strftime("%Y-%m-%d")
 

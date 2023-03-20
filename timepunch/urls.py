@@ -15,7 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from auth_user.views import CreateAccount, LoginAccount, VerifyAccount, AddEmployees, RemoveEmployees, GetEmployees
+from auth_user.views import (
+    CreateAccount,
+    LoginAccount,
+    VerifyAccount,
+    AddEmployees,
+    RemoveEmployees,
+    GetEmployees,
+)
 from time_log.views import LogTime, GetTime, GetEmployeeTime
 
 urlpatterns = [

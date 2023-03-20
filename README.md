@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 ### Docker
 ```bash
-TODO
+# Implement this
 ```
 
 ## Usage

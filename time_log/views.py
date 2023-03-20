@@ -15,8 +15,11 @@ class LogTime(APIView):
         request_params = request.POST.dict()
 
         try:
-            dt_logged = date.today() if "date_logged" not in request_params else \
-                datetime.strptime(request_params["date_logged"], "%Y-%m-%d")
+            dt_logged = (
+                date.today()
+                if "date_logged" not in request_params
+                else datetime.strptime(request_params["date_logged"], "%Y-%m-%d")
+            )
         except ValueError:
             return JsonResponse(
                 {
@@ -26,10 +29,7 @@ class LogTime(APIView):
                 status=500,
             )
 
-        duplicate_logs = TimeEntry.objects.filter(
-            user=user,
-            date_logged=dt_logged
-        )
+        duplicate_logs = TimeEntry.objects.filter(user=user, date_logged=dt_logged)
         if duplicate_logs.exists():
             return JsonResponse(
                 {
@@ -48,16 +48,17 @@ class LogTime(APIView):
                 status=500,
             )
 
-        cur_entry = TimeEntry(user=user,
-                              pay_rate=user.pay_rate,
-                              num_hours=request_params["num_hours"],
-                              date_logged=dt_logged)
+        cur_entry = TimeEntry(
+            user=user,
+            pay_rate=user.pay_rate,
+            num_hours=request_params["num_hours"],
+            date_logged=dt_logged,
+        )
         cur_entry.save()
 
         return JsonResponse(
             {
                 "log_created": True,
-
             },
             status=200,
         )
@@ -81,17 +82,15 @@ def get_time_logs(list_users: List[CustomAccount]):
     list_info = []
 
     for user in list_users:
-        time_logs = TimeEntry.objects.filter(
-            user=user
+        time_logs = TimeEntry.objects.filter(user=user)
+
+        list_info.append(
+            {
+                "email": user.email_address,
+                "pay_rates": list(map(lambda t: t.pay_rate, time_logs)),
+                "date_logged": list(map(lambda t: t.date_logged, time_logs)),
+                "num_hours": list(map(lambda t: t.num_hours, time_logs)),
+            }
         )
 
-        # TODO: optimize this
-        list_info.append({
-            "email": user.email_address,
-            "pay_rates": list(map(lambda t: t.pay_rate, time_logs)),
-            "date_logged": list(map(lambda t: t.date_logged, time_logs)),
-            "num_hours": list(map(lambda t: t.num_hours, time_logs)),
-        })
-
     return list_info
-

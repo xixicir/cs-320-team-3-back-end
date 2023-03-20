@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "auth_user",
-    "time_log"
+    "time_log",
 ]
 
 MIDDLEWARE = [
@@ -104,12 +104,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'auth_user.authentication.CustomTokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "auth_user.authentication.CustomTokenAuthentication",
     ]
 }
 
-AUTH_USER_MODEL = 'auth_user.CustomAccount'
+AUTH_USER_MODEL = "auth_user.CustomAccount"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

@@ -108,14 +108,10 @@ def map_users(request_params, val):
     list_emails = json.loads(request_params.get("list_emails", "[]"))
     if not list_emails:
         return JsonResponse(
-            {
-                "success": False,
-                "errors": "No list_emails field in request"
-            },
+            {"success": False, "errors": "No list_emails field in request"},
             status=500,
         )
 
-    # TODO: add filter for company
     list_possible: [CustomAccount] = CustomAccount.objects.filter(
         reduce(operator.or_, (Q(email_address__contains=x) for x in list_emails))
     )
