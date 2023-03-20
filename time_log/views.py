@@ -34,7 +34,7 @@ class LogTime(APIView):
             return JsonResponse(
                 {
                     "log_created": False,
-                    "errors": "time log for today already exists",
+                    "errors": f"time log for date {dt_logged} already exists",
                 },
                 status=500,
             )
