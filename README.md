@@ -25,6 +25,9 @@ python manage.py startapp auth_user
 python manage.py makemigrations auth_user
 python manage.py migrate
 
+# Start postgres
+sudo systemctl start postgresql
+ 
 # Start server
 python manage.py runserver 0.0.0.0:8080
 ```
