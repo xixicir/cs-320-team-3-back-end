@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from os import getenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,18 +76,23 @@ WSGI_APPLICATION = "timepunch.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 # TODO: switch to env vars for secrets/passwords
+db_type = getenv("DB_TYPE", "sqlite")
+
+POSTGRES_CFG = {
+    "ENGINE": "django.db.backends.postgresql",
+    "NAME": "data_back_end",
+    "USER": "postgres",
+    "PASSWORD": "mypass",
+    "HOST": "localhost",
+}
+
+SQLITE_CFG = {
+    "ENGINE": "django.db.backends.sqlite3",
+    "NAME": BASE_DIR / "db.sqlite3",
+}
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'data_back_end',
-        'USER': 'postgres',
-        'PASSWORD': 'mypass',
-        'HOST': 'localhost',
-    },
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": BASE_DIR / "db.sqlite3",
-    # }
+    "default": POSTGRES_CFG if db_type == "postgres" else SQLITE_CFG,
 }
 
 # Password validation

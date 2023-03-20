@@ -25,9 +25,12 @@ python manage.py startapp auth_user
 python manage.py makemigrations auth_user
 python manage.py migrate
 
+# Export env var to use postgres
+export DB_TYPE=postgres
+
 # Start postgres
 sudo systemctl start postgresql
- 
+
 # Start server
 python manage.py runserver 0.0.0.0:8080
 ```
