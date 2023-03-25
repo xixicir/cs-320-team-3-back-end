@@ -8,6 +8,12 @@ class CustomAccount(AbstractUser):
     company = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    is_manager = models.BooleanField()
+    start_date = models.DateField()
+    employee_ID = models.IntegerField()
+    company_ID = models.IntegerField()
+    position = models.CharField(max_length=50)
+
 
     manager = models.ForeignKey(
         "CustomAccount", on_delete=models.CASCADE, blank=True, null=True
