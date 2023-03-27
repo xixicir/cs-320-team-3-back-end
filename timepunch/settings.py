@@ -78,13 +78,14 @@ WSGI_APPLICATION = "timepunch.wsgi.application"
 
 # TODO: switch to env vars for secrets/passwords
 db_type = getenv("DB_TYPE", "sqlite")
+db_host = getenv("DB_HOST", "localhost")
 
 POSTGRES_CFG = {
     "ENGINE": "django.db.backends.postgresql",
-    "NAME": "data_back_end",
+    "NAME": "postgres",
     "USER": "postgres",
     "PASSWORD": "mypass",
-    "HOST": "localhost",
+    "HOST": f"{db_host}",
 }
 
 SQLITE_CFG = {

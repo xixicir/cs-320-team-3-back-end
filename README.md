@@ -36,6 +36,7 @@ python manage.py migrate
 
 # Export env var to use postgres
 export DB_TYPE=postgres # or sqlite
+export DB_HOST=localhost # or db
 
 # Start wsgi server for development
 python manage.py runserver 0.0.0.0:8080
