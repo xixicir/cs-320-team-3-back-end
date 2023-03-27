@@ -5,6 +5,7 @@ Brief description...
 ## Installation
 
 ### Local
+
 ```bash
 python -m venv venv
 source venv/bin/activate
@@ -12,11 +13,14 @@ pip install -r requirements.txt
 ```
 
 ### Docker
+
 ```bash
-# Implement this
+# run the docker compose (you need to install docker first)
+docker compose up
 ```
 
 ## Usage
+
 ```bash
 # Steps to create a new app
 python manage.py startapp auth_user
@@ -35,10 +39,10 @@ sudo systemctl start postgresql
 python manage.py runserver 0.0.0.0:8080
 ```
 
-
 ### Testing
 
 Example cURL calls
+
 ```bash
 curl -X POST  "http://127.0.0.1:8080/account/create" \
                           -d email_address=john.doe@gmail.com \
@@ -72,14 +76,14 @@ curl -X POST "http://127.0.0.1:8080/manager/remove" \
                 -d list_emails='["jason.boe@gmail.com"]'
 
 curl -X GET "http://127.0.0.1:8080/manager/get" \
-                -H "Authorization: Bearer $TOKEN" 
+                -H "Authorization: Bearer $TOKEN"
 
 curl -X POST "http://127.0.0.1:8080/time/log" \
                 -H "Authorization: Bearer $TOKEN" \
                 -d num_hours=8
 
 curl -X GET "http://127.0.0.1:8080/time/get" \
-                -H "Authorization: Bearer $TOKEN" 
+                -H "Authorization: Bearer $TOKEN"
 
 curl -X GET "http://127.0.0.1:8080/time/employees" \
                 -H "Authorization: Bearer $TOKEN"
