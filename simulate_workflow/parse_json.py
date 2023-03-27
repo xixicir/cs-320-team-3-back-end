@@ -16,9 +16,13 @@ def get_time_files():
 
 def get_dicts(list_files, limit=100):
     lst_dts = list()
-    for fname in list_files:
+    for idx, fname in enumerate(sorted(list_files)):
         with open(fname, "r") as f:
             lst_this = json.load(f)
+
+            for item in lst_this:
+                item["companyId"] = idx
+
             lst_dts.extend(lst_this[:limit])
     return lst_dts
 

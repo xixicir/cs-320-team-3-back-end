@@ -5,18 +5,25 @@ Brief description...
 ## Installation
 
 ### Local
+
 ```bash
+# Python setup
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+
+# Start postgres
+sudo systemctl start postgresql
 ```
 
 ### Docker
+
 ```bash
 # Implement this
 ```
 
 ## Usage
+
 ```bash
 # Steps to create a new app
 python manage.py startapp auth_user
@@ -25,14 +32,20 @@ python manage.py startapp auth_user
 python manage.py makemigrations auth_user
 python manage.py migrate
 
-# Start server
-python manage.py runserver 0.0.0.0:8080
-```
+# Export env var to use postgres
+export DB_TYPE=postgres # or sqlite
 
+# Start wsgi server for development
+python manage.py runserver 0.0.0.0:8080
+
+# Or start gunicorn server
+gunicorn -c service_cfg.py
+```
 
 ### Testing
 
 Example cURL calls
+
 ```bash
 curl -X POST  "http://127.0.0.1:8080/account/create" \
                           -d email_address=john.doe@gmail.com \
@@ -66,15 +79,22 @@ curl -X POST "http://127.0.0.1:8080/manager/remove" \
                 -d list_emails='["jason.boe@gmail.com"]'
 
 curl -X GET "http://127.0.0.1:8080/manager/get" \
-                -H "Authorization: Bearer $TOKEN" 
+                -H "Authorization: Bearer $TOKEN"
 
 curl -X POST "http://127.0.0.1:8080/time/log" \
                 -H "Authorization: Bearer $TOKEN" \
                 -d num_hours=8
 
 curl -X GET "http://127.0.0.1:8080/time/get" \
-                -H "Authorization: Bearer $TOKEN" 
+                -H "Authorization: Bearer $TOKEN"
 
 curl -X GET "http://127.0.0.1:8080/time/employees" \
                 -H "Authorization: Bearer $TOKEN"
+
+curl -X GET "http://127.0.0.1:8080/employee/pay" \
+                -H "Authorization: Bearer $TOKEN"
+
+curl -X POST "http://127.0.0.1:8080/employee/pay" \
+                -H "Authorization: Bearer $TOKEN" \
+                -d pay_rate=23.78
 ```

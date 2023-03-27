@@ -25,6 +25,11 @@ def register_user(user_dt):
         "company": user_dt["companyName"],
         "first_name": user_dt["firstName"],
         "last_name": user_dt["lastName"],
+        "is_manager": user_dt["isManager"],
+        "company_ID": user_dt["companyId"],
+        "position": user_dt["positionTitle"],
+        "start_date": user_dt["startDate"],
+        "employee_ID": user_dt["employeeId"],
     }
     requests.post(f"{HOST_IP}/account/create", data=data)
 
@@ -62,7 +67,7 @@ def add_time_log(usr_token, dt_worked, hours_worked):
 
 
 def add_all_info():
-    list_users, list_times = get_all_dicts(limit=1000000)
+    list_users, list_times = get_all_dicts(limit=10**5)
     list_tokens = []
 
     for usr in tqdm(list_users, desc="Register/login users"):
