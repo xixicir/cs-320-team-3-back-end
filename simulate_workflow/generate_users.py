@@ -62,7 +62,7 @@ def add_time_log(usr_token, dt_worked, hours_worked):
 
 
 def add_all_info():
-    list_users, list_times = get_all_dicts(limit=1000000)
+    list_users, list_times = get_all_dicts(limit=10**5)
     list_tokens = []
 
     for usr in tqdm(list_users, desc="Register/login users"):
