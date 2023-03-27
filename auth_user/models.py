@@ -13,7 +13,7 @@ class CustomAccount(AbstractUser):
 
     start_date = models.DateField(default=timezone.now)
 
-    employee_ID = models.IntegerField(unique=True)
+    employee_ID = models.IntegerField(unique=True, null=True)
     company_ID = models.IntegerField(default=0)
     position = models.CharField(max_length=50, default="employee")
 
