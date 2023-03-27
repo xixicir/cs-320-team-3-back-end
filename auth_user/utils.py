@@ -1,5 +1,4 @@
 from typing import List
-
 from auth_user.authentication import check_auth
 from django.http import JsonResponse
 from auth_user.models import CustomAccount
