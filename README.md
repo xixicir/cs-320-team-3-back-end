@@ -16,7 +16,8 @@ pip install -r requirements.txt
 
 ```bash
 # run the docker compose (you need to install docker first)
-docker compose up
+# If you haven't build the docker, (if you already build, no need to add --build )
+docker compose up --build
 ```
 
 ## Usage
