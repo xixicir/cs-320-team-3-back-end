@@ -19,7 +19,9 @@ sudo systemctl start postgresql
 ### Docker
 
 ```bash
-# Implement this
+# run the docker compose (you need to install docker first)
+# If you haven't build the docker, (if you already build, no need to add --build )
+docker compose up --build
 ```
 
 ## Usage
@@ -41,7 +43,6 @@ python manage.py runserver 0.0.0.0:8080
 # Or start gunicorn server
 gunicorn -c service_cfg.py
 ```
-
 ### Testing
 
 Example cURL calls
