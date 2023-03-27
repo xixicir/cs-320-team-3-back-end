@@ -25,6 +25,11 @@ def register_user(user_dt):
         "company": user_dt["companyName"],
         "first_name": user_dt["firstName"],
         "last_name": user_dt["lastName"],
+        "is_manager": user_dt["isManager"],
+        "company_ID": user_dt["companyId"],
+        "position": user_dt["positionTitle"],
+        "start_date": user_dt["startDate"],
+        "employee_ID": user_dt["employeeId"],
     }
     requests.post(f"{HOST_IP}/account/create", data=data)
 
