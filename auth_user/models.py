@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from auth_user.managers import CustomUserManager
-import datetime
+from django.utils import timezone
 
 
 class CustomAccount(AbstractUser):
@@ -10,11 +10,12 @@ class CustomAccount(AbstractUser):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     is_manager = models.BooleanField(default=False)
-    start_date = models.DateField(default=datetime.date.today())
-    employee_ID = models.IntegerField(unique=True,default=00)
-    company_ID = models.IntegerField(default=00)
-    position = models.CharField(max_length=50,default='employee')
 
+    start_date = models.DateField(default=timezone.now)
+
+    employee_ID = models.IntegerField(unique=True)
+    company_ID = models.IntegerField(default=0)
+    position = models.CharField(max_length=50, default="employee")
 
     manager = models.ForeignKey(
         "CustomAccount", on_delete=models.CASCADE, blank=True, null=True
