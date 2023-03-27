@@ -7,9 +7,13 @@ Brief description...
 ### Local
 
 ```bash
+# Python setup
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+
+# Start postgres
+sudo systemctl start postgresql
 ```
 
 ### Docker
@@ -31,15 +35,14 @@ python manage.py makemigrations auth_user
 python manage.py migrate
 
 # Export env var to use postgres
-export DB_TYPE=postgres
+export DB_TYPE=postgres # or sqlite
 
-# Start postgres
-sudo systemctl start postgresql
-
-# Start server
+# Start wsgi server for development
 python manage.py runserver 0.0.0.0:8080
-```
 
+# Or start gunicorn server
+gunicorn -c service_cfg.py
+```
 ### Testing
 
 Example cURL calls
