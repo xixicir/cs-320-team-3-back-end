@@ -22,6 +22,7 @@ from auth_user.views import (
     AddEmployees,
     RemoveEmployees,
     GetEmployees,
+    EmployeePay,
 )
 from time_log.views import LogTime, GetTime, GetEmployeeTime
 
@@ -36,4 +37,5 @@ urlpatterns = [
     path("time/log", LogTime.as_view()),
     path("time/get", GetTime.as_view()),
     path("time/employees", GetEmployeeTime.as_view()),
+    path("employee/pay", EmployeePay.as_view()),
 ]
