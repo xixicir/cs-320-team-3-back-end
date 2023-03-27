@@ -8,6 +8,7 @@ from auth_user.utils import guarantee_auth, get_employees
 from functools import reduce
 import operator
 from django.db.models import Q
+from django.core.exceptions import ValidationError
 
 
 class CreateAccount(APIView):
@@ -126,3 +127,55 @@ def map_users(request_params, val):
         },
         status=200,
     )
+
+
+# allows for both getting pay and setting pay
+class EmployeePay(APIView):
+    @guarantee_auth
+    def get(self, request, user: CustomAccount):
+        return JsonResponse(
+            {
+                "pay_rate": user.pay_rate,
+            },
+            status=200,
+        )
+    @guarantee_auth
+    def post(self, request, user: CustomAccount):
+        params = request.POST.dict()
+        try:
+            new_pay_rate = float(params["pay_rate"])
+        except ValueError:
+            return JsonResponse(
+                {
+                    "user_modified": False,
+                    "errors": "pay_rate is not a valid float",
+                },
+                status=500,
+            )
+        if not new_pay_rate:
+            return JsonResponse(
+                {
+                    "user_modified": False,
+                    "errors": "pay_rate is missing",
+                },
+                status=500,
+            )
+        try:
+            # TODO: this does not seem to detect invalid pay rate
+            user.pay_rate = new_pay_rate
+            user.save()
+        except ValidationError:
+            return JsonResponse(
+                {
+                    "user_modified": False,
+                    "errors": "pay_rate is not a valid float with two decimal places maximum ",
+                },
+                status=500,
+            )
+        return JsonResponse(
+            {
+                "user_modified": True,
+            },
+            status=200,
+        )
+

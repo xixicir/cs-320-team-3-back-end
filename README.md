@@ -90,4 +90,11 @@ curl -X GET "http://127.0.0.1:8080/time/get" \
 
 curl -X GET "http://127.0.0.1:8080/time/employees" \
                 -H "Authorization: Bearer $TOKEN"
+
+curl -X GET "http://127.0.0.1:8080/employee/pay" \
+                -H "Authorization: Bearer $TOKEN"
+
+curl -X POST "http://127.0.0.1:8080/employee/pay" \
+                -H "Authorization: Bearer $TOKEN" \
+                -d pay_rate=23.78
 ```
