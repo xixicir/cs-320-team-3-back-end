@@ -15,5 +15,4 @@ RUN pip3 install -r requirements.txt
 COPY . .
 EXPOSE 8080
 
-RUN python manage.py makemigrations auth_user time_log
-RUN python manage.py migrate
+CMD [ "./start_service.sh" ]
