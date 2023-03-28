@@ -8,7 +8,7 @@ workers = 5
 bind = f"0.0.0.0:{HOST_PORT}"
 
 # Development only
-reload = True
+reload = False
 
 accesslog = "gunicorn_service.log"
 capture_output = True

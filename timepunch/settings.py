@@ -144,12 +144,12 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Use nose to run all tests
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 # Tell nose to measure coverage on the 'foo' and 'bar' apps
 NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-package=auth_user',
+    "--with-coverage",
+    "--cover-package=auth_user",
 ]
 
 # Security config
@@ -157,6 +157,8 @@ SECURE_HSTS_SECONDS = 5
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-SECURE_SSL_REDIRECT = True
+# Setting this to True blocks localhost requests
+SECURE_SSL_REDIRECT = False
+
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
