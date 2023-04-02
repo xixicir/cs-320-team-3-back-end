@@ -1,0 +1,21 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=db
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+
+volumes:
+  postgres_data:

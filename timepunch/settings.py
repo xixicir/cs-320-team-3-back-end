@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-ltbj0hg+bby5vo#=l&=c824mjc=q%it25r(gely%waec-vp@(a"
+SECRET_KEY = "oif83u989-ltbj0hg+bby5vo#=l&=c824mjc=q%it25r(gely%waec-vp@(a"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
 
@@ -76,15 +76,15 @@ WSGI_APPLICATION = "timepunch.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# TODO: switch to env vars for secrets/passwords
 db_type = getenv("DB_TYPE", "sqlite")
+db_host = getenv("DB_HOST", "localhost")
 
 POSTGRES_CFG = {
     "ENGINE": "django.db.backends.postgresql",
-    "NAME": "data_back_end",
+    "NAME": "postgres",
     "USER": "postgres",
     "PASSWORD": "mypass",
-    "HOST": "localhost",
+    "HOST": f"{db_host}",
 }
 
 SQLITE_CFG = {
@@ -144,10 +144,21 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Use nose to run all tests
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 # Tell nose to measure coverage on the 'foo' and 'bar' apps
 NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-package=auth_user',
+    "--with-coverage",
+    "--cover-package=auth_user",
 ]
+
+# Security config
+SECURE_HSTS_SECONDS = 5
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Setting this to True blocks localhost requests
+SECURE_SSL_REDIRECT = False
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
