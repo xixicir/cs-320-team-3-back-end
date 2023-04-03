@@ -49,21 +49,32 @@ gunicorn -c service_cfg.py
 Example cURL calls
 
 ```bash
-curl -X POST  "http://127.0.0.1:8080/account/create" \
-                          -d email_address=john.doe@gmail.com \
-                          -d password=passwordThis123 \
-                          -d pay_rate=45 \
-                          -d company=google \
-                          -d first_name=John \
-                          -d last_name=Doe
+curl -X 'POST' \
+          'http://127.0.0.1:8080/account/create' \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{
+          "email_address": "john.doe@gmail.com",
+          "password": "passwordThis123",
+          "pay_rate": 45,
+          "company": "google",
+          "first_name": "John",
+          "last_name": "Doe"
+}'
 
-curl -X POST  "http://127.0.0.1:8080/account/create" \
-                          -d email_address=jason.boe@gmail.com \
-                          -d password=passwordThis123 \
-                          -d pay_rate=35 \
-                          -d company=apple \
-                          -d first_name=Jason \
-                          -d last_name=Boe
+curl -X 'POST' \
+          'http://127.0.0.1:8080/account/create' \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{
+          "email_address": "jason.boe@gmail.com",
+          "password": "passwordThis123",
+          "pay_rate": 35,
+          "company": "apple",
+          "first_name": "Jason",
+          "last_name": "Boe"
+}'
+
 
 export TOKEN=$(curl -X POST  "http://127.0.0.1:8080/account/login" \
                           -d email_address=john.doe@gmail.com \
