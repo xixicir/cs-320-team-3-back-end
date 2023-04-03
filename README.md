@@ -46,7 +46,7 @@ gunicorn -c service_cfg.py
 ```
 ### Testing
 
-Example cURL calls
+Example cURL calls. For all below requests instead of using `Authorization`, use `-d "email_address = ..."` to specify user.
 
 ```bash
 curl -X 'POST' \

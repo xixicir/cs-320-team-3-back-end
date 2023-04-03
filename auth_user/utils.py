@@ -6,16 +6,24 @@ from auth_user.models import CustomAccount
 
 def guarantee_auth(f):
     def check_for_auth(*args):
-        success, user, _ = check_auth(args[1])
-        if not success:
+        params = args[1].data
+        if "email_address" not in params:
             return JsonResponse(
                 {
                     "errors": "Not Authenticated or Token invalid",
                 },
                 status=401,
             )
-
         else:
+            try:
+                user = CustomAccount.objects.get(email_address=params["email_address"])
+            except Exception:
+                return JsonResponse(
+                    {
+                        "errors": "user does not exist",
+                    },
+                    status=404,
+                )
             return f(*args, user=user)
 
     return check_for_auth
