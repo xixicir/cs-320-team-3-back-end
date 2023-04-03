@@ -1,3 +1,5 @@
+import sys
+
 from parse_json import get_all_dicts
 from random import randint
 from tqdm import tqdm
@@ -6,6 +8,11 @@ import requests
 from datetime import datetime
 
 HOST_IP = "http://127.0.0.1:8080"
+
+headers = {
+    'Content-type': 'application/json',
+    'Accept': 'application/json'
+}
 
 
 def get_random_rate():
@@ -31,7 +38,7 @@ def register_user(user_dt):
         "start_date": user_dt["startDate"],
         "employee_ID": user_dt["employeeId"],
     }
-    requests.post(f"{HOST_IP}/account/create", data=data)
+    requests.post(f"{HOST_IP}/account/create", data=json.dumps(data), headers=headers)
 
 
 def login_user(user_dt):
@@ -57,17 +64,17 @@ def add_employees(manager_token, list_employees):
 
 
 def add_time_log(usr_token, dt_worked, hours_worked):
-    headers = {
+    _headers = {
         "Authorization": f"Bearer {usr_token}",
     }
 
     data = {"num_hours": hours_worked, "date_logged": dt_worked}
 
-    requests.post(f"{HOST_IP}/time/log", headers=headers, data=data)
+    requests.post(f"{HOST_IP}/time/log", headers=_headers, data=data)
 
 
-def add_all_info():
-    list_users, list_times = get_all_dicts(limit=10**5)
+def add_all_info(limit):
+    list_users, list_times = get_all_dicts(limit=limit)
     list_tokens = []
 
     for usr in tqdm(list_users, desc="Register/login users"):
@@ -124,4 +131,4 @@ def add_all_info():
             add_time_log(list_tokens[i], dt_worked, hrs_worked)
 
 
-add_all_info()
+add_all_info(limit=int(sys.argv[1]) if len(sys.argv) > 1 else 10**5)

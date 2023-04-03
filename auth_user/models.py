@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from auth_user.managers import CustomUserManager
 from django.utils import timezone
-from rest_framework import serializers
 
 
 class CustomAccount(AbstractUser):
@@ -14,7 +13,7 @@ class CustomAccount(AbstractUser):
 
     start_date = models.DateField(default=timezone.now)
 
-    employee_ID = models.IntegerField(unique=True, null=True)
+    employee_ID = models.IntegerField(null=True)
     company_ID = models.IntegerField(default=0)
     position = models.CharField(max_length=50, default="employee")
 
