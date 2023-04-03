@@ -165,6 +165,14 @@ class EmployeePay(APIView):
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         params = request.POST.dict()
+        if "pay_rate" not in params:
+            return JsonResponse(
+                {
+                    "user_modified": False,
+                    "errors": "pay_rate is missing",
+                },
+                status=500,
+            )
         try:
             user.pay_rate = params["pay_rate"]
             user.clean_fields()
