@@ -82,14 +82,14 @@ class AddEmployees(APIView):
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         request_params = request.POST.dict()
-        return map_users(request_params, user)
+        return map_users(request_params, user, is_removed=False)
 
 
 class RemoveEmployees(APIView):
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         request_params = request.POST.dict()
-        return map_users(request_params, None)
+        return map_users(request_params, user, is_removed=True)
 
 
 class GetEmployees(APIView):
@@ -105,20 +105,28 @@ class GetEmployees(APIView):
         )
 
 
-def map_users(request_params, val):
+def map_users(request_params, val, is_removed):
     list_emails = json.loads(request_params.get("list_emails", "[]"))
     if not list_emails:
         return JsonResponse(
             {"success": False, "errors": "No list_emails field in request"},
             status=500,
         )
-
-    list_possible: [CustomAccount] = CustomAccount.objects.filter(
-        reduce(operator.or_, (Q(email_address__contains=x) for x in list_emails))
-    )
+    try:
+        list_possible: [CustomAccount] = CustomAccount.objects.filter(
+            reduce(operator.or_, (Q(email_address__contains=x) for x in list_emails))
+        ).filter(Q(company=val.company))
+    except:
+        return JsonResponse(
+            {"success": False, "errors": "Error Filtering Company"},
+            status=500,
+        )
 
     for employee in list_possible:
-        employee.manager = val
+        if not is_removed:
+            employee.manager = val
+        else:
+            employee.manager = None
         employee.save()
 
     return JsonResponse(
