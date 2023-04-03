@@ -372,6 +372,7 @@ class EmployeePay(APIView):
                 }),
             401: unauth_res},
         )
+
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         params = request.data
@@ -400,4 +401,3 @@ class EmployeePay(APIView):
                 "user_modified": True,
             },
         )
-

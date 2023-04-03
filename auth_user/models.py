@@ -26,4 +26,3 @@ class CustomAccount(AbstractUser):
     objects = CustomUserManager()
     USERNAME_FIELD = "email_address"
     REQUIRED_FIELDS = ["company", "first_name", "last_name"]
-
