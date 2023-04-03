@@ -57,8 +57,21 @@ class CreateAccount(APIView):
 
 
 class LoginAccount(APIView):
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'email_address': openapi.Schema(
+                type=openapi.TYPE_STRING,
+                description='Email address',
+                default="john.doe@gmail.com"),
+            'password': openapi.Schema(
+                type=openapi.TYPE_STRING,
+                description='Password',
+                default="passwordThis123"),
+        }),
+        responses={200: 'Success', 400: 'Bad Request'})
     def post(self, request):
-        request_params = request.POST.dict()
+        request_params = request.data
         user = authenticate(**request_params)
         if user:
             login(request, user)
@@ -82,6 +95,17 @@ class LoginAccount(APIView):
 
 
 class VerifyAccount(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(name="Authorization",
+                              type=openapi.TYPE_STRING,
+                              in_="header",
+                              required=True,
+                              default="Bearer 350ebced5e1abdf00c4e86ea39a4655398a95eb6" 
+                              )
+            ],
+        responses={200: 'Success', 400: 'Bad Request'})
+
     @guarantee_auth
     def get(self, request, user):
         return JsonResponse(
