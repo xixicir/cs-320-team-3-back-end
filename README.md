@@ -77,8 +77,10 @@ curl -X 'POST' \
 
 
 export TOKEN=$(curl -X POST  "http://127.0.0.1:8080/account/login" \
-                          -d email_address=john.doe@gmail.com \
-                          -d password=passwordThis123 | jq -r .token)
+          -d '{
+          "email_address": "john.doe@gmail.com",
+          "password": "passwordThis123"
+}')
 
 curl -H "Authorization: Bearer $TOKEN" \
                 "http://127.0.0.1:8080/account/verify"
