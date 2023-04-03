@@ -177,26 +177,42 @@ def map_users(request_params, val, is_removed):
 
 # allows for both getting pay and setting pay
 class EmployeePay(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(name="Authorization",
+                              type=openapi.TYPE_STRING,
+                              in_="header",
+                              required=True,
+                              default="Bearer 350ebced5e1abdf00c4e86ea39a4655398a95eb6" 
+                              )
+            ],
+        responses={200: 'Success', 400: 'Bad Request'})
     @guarantee_auth
     def get(self, request, user: CustomAccount):
         return JsonResponse(
             {
                 "pay_rate": user.pay_rate,
             },
-            status=200,
+            #status=200,
         )
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'pay_rate': openapi.Schema(type=openapi.TYPE_STRING, description='Pay rate'),
+            }),
+        manual_parameters=[
+            openapi.Parameter(name="Authorization",
+                              type=openapi.TYPE_STRING,
+                              in_="header",
+                              required=True,
+                              default="Bearer 350ebced5e1abdf00c4e86ea39a4655398a95eb6" 
+                              )
+            ],
+        responses={200: 'Success', 400: 'Bad Request'})
     @guarantee_auth
     def post(self, request, user: CustomAccount):
-        params = request.POST.dict()
-        if "pay_rate" not in params:
-            return JsonResponse(
-                {
-                    "user_modified": False,
-                    "errors": "pay_rate is missing",
-                },
-                status=500,
-            )
+        params = request.data
         try:
             user.pay_rate = params["pay_rate"]
             user.clean_fields()
@@ -213,6 +229,6 @@ class EmployeePay(APIView):
             {
                 "user_modified": True,
             },
-            status=200,
+            #status=200,
         )
 
