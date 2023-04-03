@@ -9,10 +9,7 @@ from datetime import datetime
 
 HOST_IP = "http://127.0.0.1:8080"
 
-headers = {
-    'Content-type': 'application/json',
-    'Accept': 'application/json'
-}
+headers = {"Content-type": "application/json", "Accept": "application/json"}
 
 
 def get_random_rate():
