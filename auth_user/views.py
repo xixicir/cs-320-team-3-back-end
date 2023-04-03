@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from rest_framework.authtoken.models import Token
-from auth_user.models import CustomAccount, CustomAccountSerializer
+from auth_user.models import CustomAccount
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login
 import json
@@ -24,7 +24,7 @@ class CreateAccount(APIView):
             'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
             'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
         }),
-                         responses={200: CustomAccountSerializer, 400: 'Bad Request'})
+                         responses={200: 'Success', 400: 'Bad Request'})
     def post(self, request):
         request_params = request.data
         try:
