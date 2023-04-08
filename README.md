@@ -46,7 +46,7 @@ gunicorn -c service_cfg.py
 ```
 ### Testing
 
-Example cURL calls
+#### cURL calls
 
 ```bash
 curl -X 'POST' \
@@ -110,4 +110,12 @@ curl -X GET "http://127.0.0.1:8080/employee/pay" \
 curl -X POST "http://127.0.0.1:8080/employee/pay" \
                 -H "Authorization: Bearer $TOKEN" \
                 -d pay_rate=23.78
+```
+
+
+#### JSON simulation
+
+```bash
+# Limit of 100 (providing no limit runs it on all datapoints)
+python simulate_workflow/generate_users.py 100
 ```
