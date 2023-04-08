@@ -28,6 +28,8 @@ from time_log.views import LogTime, GetTime, GetEmployeeTime
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.conf import settings
+from django.conf.urls.static import static
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -68,4 +70,4 @@ urlpatterns = [
     path("time/get", GetTime.as_view()),
     path("time/employees", GetEmployeeTime.as_view()),
     path("employee/pay", EmployeePay.as_view()),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
