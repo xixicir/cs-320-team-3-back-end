@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.core.exceptions import ValidationError
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.forms.models import model_to_dict
 
 
 class CreateAccount(APIView):
@@ -107,6 +108,16 @@ class VerifyAccount(APIView):
         )
 
 
+class GetAccount(APIView):
+    @guarantee_auth
+    def get(self, request, user):
+        dict_user = model_to_dict(user, exclude=["password"])
+        return JsonResponse(
+            dict_user,
+            status=200,
+        )
+
+
 class AddEmployees(APIView):
     @guarantee_auth
     def post(self, request, user: CustomAccount):
@@ -128,7 +139,11 @@ class GetEmployees(APIView):
 
         return JsonResponse(
             {
-                "list_employees": list(map(lambda u: u.email_address, list_employees)),
+                "list_employees": list(
+                    map(
+                        lambda u: model_to_dict(u, exclude=["password"]), list_employees
+                    )
+                ),
             },
             status=200,
         )
