@@ -7,12 +7,24 @@ from time_log.models import TimeEntry
 from rest_framework.views import APIView
 from auth_user.utils import guarantee_auth
 from datetime import datetime, date
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+from auth_user.views import auth_param
 
 
 class LogTime(APIView):
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'date_logged': openapi.Schema(type=openapi.TYPE_STRING, description="Date logged"),
+            'num_hours': openapi.Schema(type=openapi.TYPE_STRING, description="Number of hours to be logged"),
+            }),
+        manual_parameters=[auth_param],
+        responses={200: 'Success', 400: 'Bad Request'})
     @guarantee_auth
     def post(self, request, user: CustomAccount):
-        request_params = request.POST.dict()
+        request_params = request.data
 
         try:
             dt_logged = (
@@ -65,6 +77,9 @@ class LogTime(APIView):
 
 
 class GetTime(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[auth_param],
+        responses={200: 'Success', 400: 'Bad Request'})
     @guarantee_auth
     def get(self, request, user: CustomAccount):
         time_log = get_time_logs([user])[0]
@@ -72,6 +87,9 @@ class GetTime(APIView):
 
 
 class GetEmployeeTime(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[auth_param],
+        responses={200: 'Success', 400: 'Bad Request'})
     @guarantee_auth
     def get(self, request, user: CustomAccount):
         time_logs = get_time_logs(get_employees(user))

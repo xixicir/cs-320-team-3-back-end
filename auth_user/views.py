@@ -7,12 +7,19 @@ import json
 from auth_user.utils import guarantee_auth, get_employees
 from functools import reduce
 import operator
-from django.db import models
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+# note: default value is a token that exists in my own database. change this
+#   for making testing with swagger faster as necessary
+auth_param = openapi.Parameter(name="Authorization",
+                              type=openapi.TYPE_STRING,
+                              in_="header",
+                              required=True,
+                              default="Bearer 350ebced5e1abdf00c4e86ea39a4655398a95eb6" 
+                              )
 
 class CreateAccount(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
@@ -96,14 +103,7 @@ class LoginAccount(APIView):
 
 class VerifyAccount(APIView):
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(name="Authorization",
-                              type=openapi.TYPE_STRING,
-                              in_="header",
-                              required=True,
-                              default="Bearer 350ebced5e1abdf00c4e86ea39a4655398a95eb6" 
-                              )
-            ],
+        manual_parameters=[auth_param],
         responses={200: 'Success', 400: 'Bad Request'})
 
     @guarantee_auth
@@ -178,14 +178,7 @@ def map_users(request_params, val, is_removed):
 # allows for both getting pay and setting pay
 class EmployeePay(APIView):
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(name="Authorization",
-                              type=openapi.TYPE_STRING,
-                              in_="header",
-                              required=True,
-                              default="Bearer 350ebced5e1abdf00c4e86ea39a4655398a95eb6" 
-                              )
-            ],
+        manual_parameters=[auth_param],
         responses={200: 'Success', 400: 'Bad Request'})
     @guarantee_auth
     def get(self, request, user: CustomAccount):
@@ -201,18 +194,19 @@ class EmployeePay(APIView):
         properties={
             'pay_rate': openapi.Schema(type=openapi.TYPE_STRING, description='Pay rate'),
             }),
-        manual_parameters=[
-            openapi.Parameter(name="Authorization",
-                              type=openapi.TYPE_STRING,
-                              in_="header",
-                              required=True,
-                              default="Bearer 350ebced5e1abdf00c4e86ea39a4655398a95eb6" 
-                              )
-            ],
+        manual_parameters=[auth_param],
         responses={200: 'Success', 400: 'Bad Request'})
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         params = request.data
+        if "pay_rate" not in params:
+            return JsonResponse(
+                {
+                    "user_modified": False,
+                    "errors": "missing field pay_rate",
+                },
+                status=500,
+            )
         try:
             user.pay_rate = params["pay_rate"]
             user.clean_fields()
