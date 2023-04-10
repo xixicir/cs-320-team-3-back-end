@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.core.exceptions import ValidationError
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.forms.models import model_to_dict
 
 # note: default value is a token that exists in my own database. change this
 #   for making testing with swagger faster as necessary
@@ -194,6 +195,16 @@ class VerifyAccount(APIView):
         )
 
 
+class GetAccount(APIView):
+    @guarantee_auth
+    def get(self, request, user):
+        dict_user = model_to_dict(user, exclude=["password"])
+        return JsonResponse(
+            dict_user,
+            status=200,
+        )
+
+
 class AddEmployees(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT,
@@ -288,7 +299,11 @@ class GetEmployees(APIView):
 
         return JsonResponse(
             {
-                "list_employees": list(map(lambda u: u.email_address, list_employees)),
+                "list_employees": list(
+                    map(
+                        lambda u: model_to_dict(u, exclude=["password"]), list_employees
+                    )
+                ),
             },
             status=200,
         )

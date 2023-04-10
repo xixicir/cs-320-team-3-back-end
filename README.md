@@ -44,6 +44,7 @@ python manage.py runserver 0.0.0.0:8080
 # Or start gunicorn server
 gunicorn -c service_cfg.py
 ```
+
 ### Testing
 
 #### cURL calls
@@ -87,6 +88,9 @@ export TOKEN=$(curl -X POST  "http://127.0.0.1:8080/account/login" \
 curl -H "Authorization: Bearer $TOKEN" \
                 "http://127.0.0.1:8080/account/verify"
 
+curl -H "Authorization: Bearer $TOKEN" \
+                "http://127.0.0.1:8080/account/get"
+
 curl -X POST "http://127.0.0.1:8080/manager/add" \
                 -H "Authorization: Bearer $TOKEN" \
                 -d list_emails='["jason.boe@gmail.com"]'
@@ -117,7 +121,6 @@ curl -X POST "http://127.0.0.1:8080/employee/pay" \
                 -H "Authorization: Bearer $TOKEN" \
                 -d '{ "pay_rate": "23.78" }'
 ```
-
 
 #### JSON simulation
 
