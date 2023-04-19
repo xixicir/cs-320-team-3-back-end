@@ -26,7 +26,7 @@ class LogTime(APIView):
                     "log_created": False,
                     "errors": "date_logged is not in correct format (yyyy-mm-dd)",
                 },
-                status=500,
+                status=422,
             )
 
         duplicate_logs = TimeEntry.objects.filter(user=user, date_logged=dt_logged)
@@ -36,7 +36,7 @@ class LogTime(APIView):
                     "log_created": False,
                     "errors": f"time log for date {dt_logged} already exists",
                 },
-                status=500,
+                status=422,
             )
 
         if "num_hours" not in request_params:
@@ -45,7 +45,7 @@ class LogTime(APIView):
                     "log_created": False,
                     "errors": "num_hours not provided in request",
                 },
-                status=500,
+                status=422,
             )
 
         cur_entry = TimeEntry(
