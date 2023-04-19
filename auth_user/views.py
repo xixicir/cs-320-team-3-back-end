@@ -239,7 +239,7 @@ class AddEmployees(APIView):
                 })})
     @guarantee_auth
     def post(self, request, user: CustomAccount):
-        request_params = request.POST.dict()
+        request_params = request.data
         return map_users(request_params, user, is_removed=False)
 
 
@@ -276,7 +276,7 @@ class RemoveEmployees(APIView):
                 })})
     @guarantee_auth
     def post(self, request, user: CustomAccount):
-        request_params = request.POST.dict()
+        request_params = request.data
         return map_users(request_params, user, is_removed=True)
 
 
@@ -310,7 +310,7 @@ class GetEmployees(APIView):
 
 
 def map_users(request_params, val, is_removed):
-    list_emails = json.loads(request_params.get("list_emails", "[]"))
+    list_emails = request_params.get("list_emails", "[]")
     if not list_emails:
         return JsonResponse(
             {"success": False, "errors": "No list_emails field in request"},
