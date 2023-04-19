@@ -72,11 +72,12 @@ class TestBasic(TestCase):
         TOKEN = json.loads(response.content)['token']
 
         # Verify 
+        headers={
+            "HTTP_Authorization": f"Bearer {TOKEN}"
+        }
         response = self.client.get(
-            path='http://127.0.0.1:8080/account/verify',
-            headers={
-                "Authorization": f"Bearer {TOKEN}"
-            },
+            'http://127.0.0.1:8080/account/verify',
+            **headers,
         )
         self.assertEqual(response.status_code, 200)
 
@@ -101,61 +102,112 @@ class TestBasic(TestCase):
         )
         self.assertFalse(json.loads(response.content)['login_success'])
 
-    # def test_employee(self):
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/account/create',
-    #         data={
-    #             "email_address": "employee1@test.com",
-    #             "password": "testpassword",
-    #             "first_name": "1",
-    #             "last_name": "User",
-    #             "company": "Duck Creek",
-    #             "pay_rate": 10,
-    #             "is_manager": False,
-    #         },
-    #     )
+    def test_employee(self):
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/create',
+            data={
+                "email_address": "employee1@test.com",
+                "password": "testpassword",
+                "first_name": "1",
+                "last_name": "User",
+                "company": "Duck Creek",
+                "pay_rate": 10,
+                "is_manager": False,
+            },
+        )
 
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/account/create',
-    #         data={
-    #             "email_address": "employee2@test.com",
-    #             "password": "testpassword",
-    #             "first_name": "2",
-    #             "last_name": "User",
-    #             "company": "Duck Creek",
-    #             "pay_rate": 10,
-    #             "is_manager": False,
-    #         },
-    #     )
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/create',
+            data={
+                "email_address": "employee2@test.com",
+                "password": "testpassword",
+                "first_name": "2",
+                "last_name": "User",
+                "company": "Duck Creek",
+                "pay_rate": 100,
+                "is_manager": False,
+            },
+        )
         
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/account/create',
-    #         data={
-    #             "email_address": "manager@test.com",
-    #             "password": "testpassword",
-    #             "first_name": "Test",
-    #             "last_name": "User",
-    #             "company": "Duck Creek",
-    #             "pay_rate": 10,
-    #             "is_manager": True,
-    #         },
-    #     )
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/create',
+            data={
+                "email_address": "manager@test.com",
+                "password": "testpassword",
+                "first_name": "Test",
+                "last_name": "User",
+                "company": "Duck Creek",
+                "pay_rate": 150,
+                "is_manager": True,
+            },
+        )
 
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/account/login',
-    #         data={
-    #             "email_address": "manager@test.com",
-    #             "password": "testpassword",
-    #         },
-    #     )
-    #     TOKEN = json.loads(response.content)['token']
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/login',
+            data={
+                "email_address": "manager@test.com",
+                "password": "testpassword",
+            },
+        )
+        TOKEN = json.loads(response.content)['token']
 
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/manager/add',
-    #         headers={
-    #             "Authorization": f"Bearer {TOKEN}"
-    #         },
-    #         data={
-    #             "list_emails": ["employee2@test.com", "employee2@test.com"],
-    #         }
-    #     )
+        # Add Employee
+        headers={
+            "HTTP_Authorization": f"Bearer {TOKEN}"
+        }
+        response = self.client.post(
+            'http://127.0.0.1:8080/manager/add',
+            **headers,
+            data={
+                "list_emails": '["employee1@test.com", "employee2@test.com"]',
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Get Employee
+        headers={
+            "HTTP_Authorization": f"Bearer {TOKEN}"
+        }
+        response = self.client.get(
+            'http://127.0.0.1:8080/manager/get',
+            **headers,
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Remove Employee
+        headers={
+            "HTTP_Authorization": f"Bearer {TOKEN}"
+        }
+        response = self.client.post(
+            'http://127.0.0.1:8080/manager/remove',
+            **headers,
+            data={
+                "list_emails": '["employee2@test.com"]',
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Get Manager Pay
+        headers={
+            "HTTP_Authorization": f"Bearer {TOKEN}"
+        }
+        response = self.client.get(
+            'http://127.0.0.1:8080/employee/pay',
+            **headers,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['pay_rate'], '150.00')
+
+        # Set Manager Pay
+        headers={
+            "HTTP_Authorization": f"Bearer {TOKEN}"
+        }
+        response = self.client.post(
+            'http://127.0.0.1:8080/employee/pay',
+            **headers,
+            data={
+                'pay_rate' : 99,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(json.loads(response.content)['user_modified'])
