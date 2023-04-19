@@ -81,7 +81,6 @@ class TestBasic(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-
         # Incorrect Password
         response = self.client.post(
             path='http://127.0.0.1:8080/account/login',
@@ -91,6 +90,7 @@ class TestBasic(TestCase):
             },
         )
         self.assertFalse(json.loads(response.content)['login_success'])
+        self.assertEqual(response.status_code, 500)
 
         # Incorrect Email
         response = self.client.post(
@@ -151,7 +151,7 @@ class TestBasic(TestCase):
         )
         TOKEN = json.loads(response.content)['token']
 
-        # Add Employee
+        # Add Employee as Manager
         headers={
             "HTTP_Authorization": f"Bearer {TOKEN}"
         }
@@ -211,3 +211,39 @@ class TestBasic(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(json.loads(response.content)['user_modified'])
+
+        # Test Incorrect Token
+        headers={
+            "HTTP_Authorization": f"Bearer {1234}"
+        }
+        response = self.client.post(
+            'http://127.0.0.1:8080/employee/pay',
+            **headers,
+            data={
+                'pay_rate' : 99,
+            },
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(json.loads(response.content)['errors'], "Not Authenticated or Token invalid")
+
+        # Not as manager 
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/login',
+            data={
+                "email_address": "employee1@test.com",
+                "password": "testpassword",
+            },
+        )
+        TOKEN = json.loads(response.content)['token']
+
+        headers={
+            "HTTP_Authorization": f"Bearer {TOKEN}"
+        }
+        response = self.client.post(
+            'http://127.0.0.1:8080/manager/add',
+            **headers,
+            data={
+                "list_emails": '["employee1@test.com", "employee2@test.com"]',
+            }
+        )
+        self.assertEqual(response.status_code, 200)
