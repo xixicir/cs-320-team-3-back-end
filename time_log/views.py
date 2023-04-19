@@ -12,7 +12,7 @@ from datetime import datetime, date
 class LogTime(APIView):
     @guarantee_auth
     def post(self, request, user: CustomAccount):
-        request_params = request.POST.dict()
+        request_params = request.data
 
         try:
             dt_logged = (
@@ -87,9 +87,16 @@ def get_time_logs(list_users: List[CustomAccount]):
         list_info.append(
             {
                 "email": user.email_address,
-                "pay_rates": list(map(lambda t: t.pay_rate, time_logs)),
-                "date_logged": list(map(lambda t: t.date_logged, time_logs)),
-                "num_hours": list(map(lambda t: t.num_hours, time_logs)),
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "time_entries": [
+                    {
+                        "pay_rate": t.pay_rate,
+                        "date_logged": t.date_logged,
+                        "num_hours": t.num_hours,
+                    }
+                    for t in time_logs
+                ],
             }
         )
 
