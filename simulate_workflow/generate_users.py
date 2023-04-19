@@ -55,7 +55,7 @@ def add_employees(manager_token, list_employees):
         return
 
     headers["Authorization"] = f"Bearer {manager_token}"
-    data = {"list_emails": json.dumps(list_employees)}
+    data = {"list_emails": list_employees}
 
     resp = requests.post(
         f"{HOST_IP}/manager/add", headers=headers, data=json.dumps(data)

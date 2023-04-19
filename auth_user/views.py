@@ -310,7 +310,7 @@ class GetEmployees(APIView):
 
 
 def map_users(request_params, val, is_removed):
-    list_emails = request_params.get("list_emails", "[]")
+    list_emails = request_params.get("list_emails", [])
     if not list_emails:
         return JsonResponse(
             {"success": False, "errors": "No list_emails field in request"},
