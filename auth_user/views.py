@@ -94,7 +94,7 @@ class CreateAccount(APIView):
                         "user_created": False,
                         "errors": "email address already exists",
                     },
-                    status=500,
+                    status=401,
                 )
 
             this_user = CustomAccount.objects.create_user(**request_params)
@@ -108,7 +108,7 @@ class CreateAccount(APIView):
         except KeyError as e:
             return JsonResponse(
                 {"user_created": False, "errors": f"BadRequest: Missing key\n{e}"},
-                status=500,
+                status=401,
             )
 
 
@@ -167,7 +167,7 @@ class LoginAccount(APIView):
                     "login_success": False,
                     "errors": "email or password invalid",
                 },
-                status=500,
+                status=401,
             )
 
 
@@ -314,7 +314,7 @@ def map_users(request_params, val, is_removed):
     if not list_emails:
         return JsonResponse(
             {"success": False, "errors": "No list_emails field in request"},
-            status=500,
+            status=422,
         )
     try:
         list_possible: [CustomAccount] = CustomAccount.objects.filter(
@@ -323,7 +323,7 @@ def map_users(request_params, val, is_removed):
     except:
         return JsonResponse(
             {"success": False, "errors": "Error Filtering Company"},
-            status=500,
+            status=400,
         )
 
     for employee in list_possible:
@@ -397,7 +397,7 @@ class EmployeePay(APIView):
                     "user_modified": False,
                     "errors": "missing field pay_rate",
                 },
-                status=500,
+                status=422,
             )
         try:
             user.pay_rate = params["pay_rate"]
@@ -409,7 +409,7 @@ class EmployeePay(APIView):
                     "user_modified": False,
                     "errors": "pay_rate is not a valid float with two decimal places maximum",
                 },
-                status=500,
+                status=422,
             )
         return JsonResponse(
             {
