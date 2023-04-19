@@ -359,7 +359,6 @@ class TestBasic(TestCase):
         TOKEN = json.loads(response.content)['token']
 
         # Verify 
-<<<<<<< HEAD
         headers={
             "HTTP_Authorization": f"Bearer {TOKEN}"
         }
@@ -573,12 +572,6 @@ class TestBasic(TestCase):
         TOKEN = json.loads(response.content)['token']
 
         # Verify 
-||||||| parent of 9f5f050 (tests fix)
-=======
-        headers={
-            "HTTP_Authorization": f"Bearer {TOKEN}"
-        }
->>>>>>> 9f5f050 (tests fix)
         response = self.client.get(
             'http://127.0.0.1:8080/account/verify',
             **headers,
@@ -595,6 +588,7 @@ class TestBasic(TestCase):
             },
         )
         self.assertFalse(json.loads(response.content)['login_success'])
+        self.assertEqual(response.status_code, 500)
 
         # Incorrect Email
         response = self.client.post(
