@@ -76,14 +76,24 @@ curl -X 'POST' \
           "last_name": "Boe"
 }'
 
-
-export TOKEN=$(curl -X POST  "http://127.0.0.1:8080/account/login" \
+export TOKEN=$(curl -X 'POST' \
+          'http://127.0.0.1:8080/account/login' \
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
           -d '{
           "email_address": "john.doe@gmail.com",
           "password": "passwordThis123"
-}' | jq ".token" -r)
+        }' | jq -r .token)
+
+# After running simulate_workflow/generate_users.py
+export TOKEN=$(curl -X 'POST' \
+          'http://127.0.0.1:8080/account/login' \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{
+          "email_address": "Betty_Burke@gizmogram.com",
+          "password": "burkebe"
+        }' | jq -r .token)
 
 curl -H "Authorization: Bearer $TOKEN" \
                 "http://127.0.0.1:8080/account/verify"
@@ -91,20 +101,29 @@ curl -H "Authorization: Bearer $TOKEN" \
 curl -H "Authorization: Bearer $TOKEN" \
                 "http://127.0.0.1:8080/account/get"
 
-curl -X POST "http://127.0.0.1:8080/manager/add" \
-                -H "Authorization: Bearer $TOKEN" \
-                -d list_emails='["jason.boe@gmail.com"]'
+curl -X 'POST' \
+          'http://127.0.0.1:8080/manager/add' \
+          -H "Authorization: Bearer $TOKEN" \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{"list_emails": ["jason.boe@gmail.com"]}'
 
-curl -X POST "http://127.0.0.1:8080/manager/remove" \
-                -H "Authorization: Bearer $TOKEN" \
-                -d list_emails='["jason.boe@gmail.com"]'
+curl -X 'POST' \
+          'http://127.0.0.1:8080/manager/remove' \
+          -H "Authorization: Bearer $TOKEN" \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{"list_emails": ["jason.boe@gmail.com"]}'
 
 curl -X GET "http://127.0.0.1:8080/manager/get" \
                 -H "Authorization: Bearer $TOKEN"
 
-curl -X POST "http://127.0.0.1:8080/time/log" \
-                -H "Authorization: Bearer $TOKEN" \
-                -d num_hours=8
+curl -X 'POST' \
+          'http://127.0.0.1:8080/time/log' \
+          -H "Authorization: Bearer $TOKEN" \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{"num_hours": 8}'
 
 curl -X GET "http://127.0.0.1:8080/time/get" \
                 -H "Authorization: Bearer $TOKEN"
@@ -115,11 +134,13 @@ curl -X GET "http://127.0.0.1:8080/time/employees" \
 curl -X GET "http://127.0.0.1:8080/employee/pay" \
                 -H "Authorization: Bearer $TOKEN"
 
-curl -X POST "http://127.0.0.1:8080/employee/pay" \
-                -H 'accept: application/json' \
-                -H 'Content-Type: application/json' \
-                -H "Authorization: Bearer $TOKEN" \
-                -d '{ "pay_rate": "23.78" }'
+
+curl -X 'POST' \
+          'http://127.0.0.1:8080/employee/pay' \
+          -H "Authorization: Bearer $TOKEN" \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{"pay_rate": 23.78}'
 ```
 
 #### JSON simulation
