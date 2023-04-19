@@ -198,10 +198,34 @@ class AddEmployees(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
-        'list_emails': openapi.Schema(name="email list", type=openapi.TYPE_ARRAY,items=openapi.Schema(type=openapi.TYPE_STRING), description='Email List'),
+        'list_emails': openapi.Schema(name="email list",
+                                      type=openapi.TYPE_ARRAY,
+                                      items=openapi.Schema(type=openapi.TYPE_STRING), 
+                                      description='Email List',
+                                      default=['john.doe@gmail.com']),
         }),
     manual_parameters=[auth_param],
-    responses={200: 'Success', 400: 'Bad Request'})
+    responses={200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'success': openapi.Schema(
+                        type=openapi.TYPE_BOOLEAN,
+                        description="if added the employees successfully",
+                        default=True
+                        )
+                }), 500: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'success': openapi.Schema(
+                        type=openapi.TYPE_BOOLEAN,
+                        description="if there is no list_emails field in request or invalid company",
+                        default=False
+                        ),
+                    "errors" : openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        description="error messages"
+                    )
+                })})
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         request_params = request.POST.dict()
@@ -212,10 +236,33 @@ class RemoveEmployees(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
-        'list_emails': openapi.Schema(type=openapi.TYPE_ARRAY,items=openapi.Schema(type=openapi.TYPE_STRING), description='Email List'),
+        'list_emails': openapi.Schema(type=openapi.TYPE_ARRAY,
+                                      items=openapi.Schema(type=openapi.TYPE_STRING), 
+                                      description='Email List',
+                                      default=['john.doe@gmail.com']),
         }),
     manual_parameters=[auth_param],
-    responses={200: 'Success', 400: 'Bad Request'})
+    responses={200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'success': openapi.Schema(
+                        type=openapi.TYPE_BOOLEAN,
+                        description="if remove the employees successfully",
+                        default=True
+                        )
+                }), 500: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'success': openapi.Schema(
+                        type=openapi.TYPE_BOOLEAN,
+                        description="if there is no list_emails field in request or invalid company",
+                        default=False
+                        ),
+                    "errors" : openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        description="error messages"
+                    )
+                })})
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         request_params = request.POST.dict()
@@ -225,7 +272,16 @@ class RemoveEmployees(APIView):
 class GetEmployees(APIView):
     @swagger_auto_schema(
     manual_parameters=[auth_param],
-    responses={200: 'Success', 400: 'Bad Request'})
+    responses={200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'list_employees': openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(
+                            type=openapi.TYPE_STRING
+                        ),description="list of employees under the user"
+                        )
+                },description='If logged in successfully'), 400: 'Bad Request'})
     @guarantee_auth
     def get(self, request, user: CustomAccount):
         list_employees = get_employees(user)
