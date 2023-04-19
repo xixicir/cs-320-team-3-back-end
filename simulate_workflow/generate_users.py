@@ -43,7 +43,9 @@ def login_user(user_dt):
         "email_address": user_dt["email"],
         "password": user_dt["password"],
     }
-    resp = requests.post(f"{HOST_IP}/account/login", data=data)
+    resp = requests.post(
+        f"{HOST_IP}/account/login", data=json.dumps(data), headers=headers
+    )
     resp.raise_for_status()
     return resp.json()["token"]
 
@@ -52,22 +54,19 @@ def add_employees(manager_token, list_employees):
     if not list_employees:
         return
 
-    headers = {
-        "Authorization": f"Bearer {manager_token}",
-    }
-
+    headers["Authorization"] = f"Bearer {manager_token}"
     data = {"list_emails": json.dumps(list_employees)}
-    requests.post(f"{HOST_IP}/manager/add", headers=headers, data=data)
+
+    resp = requests.post(
+        f"{HOST_IP}/manager/add", headers=headers, data=json.dumps(data)
+    )
+    resp.raise_for_status()
 
 
 def add_time_log(usr_token, dt_worked, hours_worked):
-    _headers = {
-        "Authorization": f"Bearer {usr_token}",
-    }
-
+    headers["Authorization"] = f"Bearer {usr_token}"
     data = {"num_hours": hours_worked, "date_logged": dt_worked}
-
-    requests.post(f"{HOST_IP}/time/log", headers=_headers, data=data)
+    requests.post(f"{HOST_IP}/time/log", headers=headers, data=json.dumps(data))
 
 
 def add_all_info(limit):

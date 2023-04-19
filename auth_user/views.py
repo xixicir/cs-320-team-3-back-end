@@ -399,11 +399,8 @@ class EmployeePay(APIView):
                 },
                 status=422,
             )
-        try:
-            user.pay_rate = params["pay_rate"]
-            user.clean_fields()
-            user.save()
-        except ValidationError:
+
+        if not isinstance(params["pay_rate"], (int, float)):
             return JsonResponse(
                 {
                     "user_modified": False,
@@ -411,6 +408,8 @@ class EmployeePay(APIView):
                 },
                 status=422,
             )
+        user.pay_rate = round(params["pay_rate"], 2)
+        user.save()
         return JsonResponse(
             {
                 "user_modified": True,
