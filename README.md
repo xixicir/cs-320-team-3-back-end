@@ -134,24 +134,12 @@ curl -X GET "http://127.0.0.1:8080/time/employees" \
 curl -X GET "http://127.0.0.1:8080/employee/pay" \
                 -H "Authorization: Bearer $TOKEN"
 
-<<<<<<< HEAD
-curl -X POST "http://127.0.0.1:8080/employee/pay" \
-                -H 'accept: application/json' \
-                -H 'Content-Type: application/json' \
-                -H "Authorization: Bearer $TOKEN" \
-                -d '{ "pay_rate": "23.78" }'
-||||||| parent of ddf4e58 (Changed format of time log)
-curl -X POST "http://127.0.0.1:8080/employee/pay" \
-                -H "Authorization: Bearer $TOKEN" \
-                -d pay_rate=23.78
-=======
 curl -X 'POST' \
           'http://127.0.0.1:8080/employee/pay' \
           -H "Authorization: Bearer $TOKEN" \
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
           -d '{"pay_rate": 23.78}'
->>>>>>> ddf4e58 (Changed format of time log)
 ```
 
 #### JSON simulation
