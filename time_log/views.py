@@ -7,9 +7,38 @@ from time_log.models import TimeEntry
 from rest_framework.views import APIView
 from auth_user.utils import guarantee_auth
 from datetime import datetime, date
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+from auth_user.views import auth_param, unauth_res
 
 
 class LogTime(APIView):
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'date_logged': openapi.Schema(type=openapi.TYPE_STRING, description="Date logged"),
+            'num_hours': openapi.Schema(type=openapi.TYPE_STRING, description="Number of hours to be logged"),
+            }),
+        manual_parameters=[auth_param],
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'log_created': openapi.Schema(
+                        type=openapi.TYPE_BOOLEAN,
+                        description='If the user was successfully created'),
+                }),
+            500: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'log_created': openapi.Schema(
+                        type=openapi.TYPE_BOOLEAN,
+                        description='If the time log was successfully created'),
+                    'errors': openapi.Schema(type=openapi.TYPE_STRING),
+                }),
+            401: unauth_res,
+            })
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         request_params = request.data
@@ -65,6 +94,30 @@ class LogTime(APIView):
 
 
 class GetTime(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[auth_param],
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'email': openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        description='Email of the user'),
+                    'pay_rates': openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(type=openapi.TYPE_STRING),
+                        description='Pay rates for each time log'),
+                    'date_logged': openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(type=openapi.TYPE_STRING),
+                        description='Dates for each time log'),
+                    'num_hours': openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(type=openapi.TYPE_STRING),
+                        description='Number of hours for each time log'),
+                }),
+            401: unauth_res,
+            })
     @guarantee_auth
     def get(self, request, user: CustomAccount):
         time_log = get_time_logs([user])[0]
@@ -72,6 +125,32 @@ class GetTime(APIView):
 
 
 class GetEmployeeTime(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[auth_param],
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'email': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Email of the user'),
+                        'pay_rates': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(type=openapi.TYPE_STRING),
+                            description='Pay rates for each time log'),
+                        'date_logged': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(type=openapi.TYPE_STRING),
+                            description='Dates for each time log'),
+                        'num_hours': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(type=openapi.TYPE_STRING),
+                            description='Number of hours for each time log'),
+                    })),
+            401: unauth_res,
+            })
     @guarantee_auth
     def get(self, request, user: CustomAccount):
         time_logs = get_time_logs(get_employees(user))
