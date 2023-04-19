@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.core.exceptions import ValidationError
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.forms.models import model_to_dict
 
 # note: default value is a token that exists in my own database. change this
 #   for making testing with swagger faster as necessary
@@ -93,7 +94,7 @@ class CreateAccount(APIView):
                         "user_created": False,
                         "errors": "email address already exists",
                     },
-                    status=500,
+                    status=401,
                 )
 
             this_user = CustomAccount.objects.create_user(**request_params)
@@ -107,7 +108,7 @@ class CreateAccount(APIView):
         except KeyError as e:
             return JsonResponse(
                 {"user_created": False, "errors": f"BadRequest: Missing key\n{e}"},
-                status=500,
+                status=401,
             )
 
 
@@ -166,7 +167,7 @@ class LoginAccount(APIView):
                     "login_success": False,
                     "errors": "email or password invalid",
                 },
-                status=500,
+                status=401,
             )
 
 
@@ -190,6 +191,16 @@ class VerifyAccount(APIView):
             {
                 "login_success": True,
             },
+            status=200,
+        )
+
+
+class GetAccount(APIView):
+    @guarantee_auth
+    def get(self, request, user):
+        dict_user = model_to_dict(user, exclude=["password"])
+        return JsonResponse(
+            dict_user,
             status=200,
         )
 
@@ -288,7 +299,11 @@ class GetEmployees(APIView):
 
         return JsonResponse(
             {
-                "list_employees": list(map(lambda u: u.email_address, list_employees)),
+                "list_employees": list(
+                    map(
+                        lambda u: model_to_dict(u, exclude=["password"]), list_employees
+                    )
+                ),
             },
             status=200,
         )
@@ -299,7 +314,7 @@ def map_users(request_params, val, is_removed):
     if not list_emails:
         return JsonResponse(
             {"success": False, "errors": "No list_emails field in request"},
-            status=500,
+            status=422,
         )
     try:
         list_possible: [CustomAccount] = CustomAccount.objects.filter(
@@ -308,7 +323,7 @@ def map_users(request_params, val, is_removed):
     except:
         return JsonResponse(
             {"success": False, "errors": "Error Filtering Company"},
-            status=500,
+            status=400,
         )
 
     for employee in list_possible:
@@ -381,7 +396,7 @@ class EmployeePay(APIView):
                     "user_modified": False,
                     "errors": "missing field pay_rate",
                 },
-                status=500,
+                status=422,
             )
         try:
             user.pay_rate = params["pay_rate"]
@@ -393,11 +408,10 @@ class EmployeePay(APIView):
                     "user_modified": False,
                     "errors": "pay_rate is not a valid float with two decimal places maximum",
                 },
-                status=500,
+                status=422,
             )
         return JsonResponse(
             {
                 "user_modified": True,
             },
         )
-

@@ -19,6 +19,7 @@ from auth_user.views import (
     CreateAccount,
     LoginAccount,
     VerifyAccount,
+    GetAccount,
     AddEmployees,
     RemoveEmployees,
     GetEmployees,
@@ -28,29 +29,42 @@ from time_log.views import LogTime, GetTime, GetEmployeeTime
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.conf import settings
+from django.conf.urls.static import static
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Snippets API",
-      default_version='v1',
-      description="Test description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=[permissions.AllowAny],
+    openapi.Info(
+        title="Snippets API",
+        default_version="v1",
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
 )
 
 urlpatterns = [
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('admin/docs/', include('django.contrib.admindocs.urls')),
+    re_path(
+        r"^swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    re_path(
+        r"^swagger/$",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    re_path(
+        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+    ),
+    path("admin/docs/", include("django.contrib.admindocs.urls")),
     path("admin", admin.site.urls),
     path("account/create", CreateAccount.as_view()),
     path("account/login", LoginAccount.as_view()),
     path("account/verify", VerifyAccount.as_view()),
+    path("account/get", GetAccount.as_view()),
     path("manager/add", AddEmployees.as_view()),
     path("manager/remove", RemoveEmployees.as_view()),
     path("manager/get", GetEmployees.as_view()),
@@ -58,4 +72,4 @@ urlpatterns = [
     path("time/get", GetTime.as_view()),
     path("time/employees", GetEmployeeTime.as_view()),
     path("employee/pay", EmployeePay.as_view()),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
