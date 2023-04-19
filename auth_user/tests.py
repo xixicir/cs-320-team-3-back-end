@@ -359,6 +359,7 @@ class TestBasic(TestCase):
         TOKEN = json.loads(response.content)['token']
 
         # Verify 
+<<<<<<< HEAD
         headers={
             "HTTP_Authorization": f"Bearer {TOKEN}"
         }
@@ -572,11 +573,15 @@ class TestBasic(TestCase):
         TOKEN = json.loads(response.content)['token']
 
         # Verify 
+||||||| parent of 9f5f050 (tests fix)
+=======
+        headers={
+            "HTTP_Authorization": f"Bearer {TOKEN}"
+        }
+>>>>>>> 9f5f050 (tests fix)
         response = self.client.get(
-            path='http://127.0.0.1:8080/account/verify',
-            headers={
-                "Authorization": f"Bearer {TOKEN}"
-            },
+            'http://127.0.0.1:8080/account/verify',
+            **headers,
         )
         self.assertEqual(response.status_code, 200)
 
@@ -601,54 +606,54 @@ class TestBasic(TestCase):
         )
         self.assertFalse(json.loads(response.content)['login_success'])
 
-    # def test_employee(self):
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/account/create',
-    #         data={
-    #             "email_address": "employee1@test.com",
-    #             "password": "testpassword",
-    #             "first_name": "1",
-    #             "last_name": "User",
-    #             "company": "Duck Creek",
-    #             "pay_rate": 10,
-    #             "is_manager": False,
-    #         },
-    #     )
+    def test_employee(self):
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/create',
+            data={
+                "email_address": "employee1@test.com",
+                "password": "testpassword",
+                "first_name": "1",
+                "last_name": "User",
+                "company": "Duck Creek",
+                "pay_rate": 10,
+                "is_manager": False,
+            },
+        )
 
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/account/create',
-    #         data={
-    #             "email_address": "employee2@test.com",
-    #             "password": "testpassword",
-    #             "first_name": "2",
-    #             "last_name": "User",
-    #             "company": "Duck Creek",
-    #             "pay_rate": 10,
-    #             "is_manager": False,
-    #         },
-    #     )
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/create',
+            data={
+                "email_address": "employee2@test.com",
+                "password": "testpassword",
+                "first_name": "2",
+                "last_name": "User",
+                "company": "Duck Creek",
+                "pay_rate": 100,
+                "is_manager": False,
+            },
+        )
         
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/account/create',
-    #         data={
-    #             "email_address": "manager@test.com",
-    #             "password": "testpassword",
-    #             "first_name": "Test",
-    #             "last_name": "User",
-    #             "company": "Duck Creek",
-    #             "pay_rate": 10,
-    #             "is_manager": True,
-    #         },
-    #     )
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/create',
+            data={
+                "email_address": "manager@test.com",
+                "password": "testpassword",
+                "first_name": "Test",
+                "last_name": "User",
+                "company": "Duck Creek",
+                "pay_rate": 150,
+                "is_manager": True,
+            },
+        )
 
-    #     response = self.client.post(
-    #         path='http://127.0.0.1:8080/account/login',
-    #         data={
-    #             "email_address": "manager@test.com",
-    #             "password": "testpassword",
-    #         },
-    #     )
-    #     TOKEN = json.loads(response.content)['token']
+        response = self.client.post(
+            path='http://127.0.0.1:8080/account/login',
+            data={
+                "email_address": "manager@test.com",
+                "password": "testpassword",
+            },
+        )
+        TOKEN = json.loads(response.content)['token']
 
     #     response = self.client.post(
     #         path='http://127.0.0.1:8080/manager/add',
