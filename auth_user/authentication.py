@@ -28,7 +28,7 @@ def check_auth(request):
         auth_tok: str = request.headers.get("Authorization")
         assert auth_tok.startswith("Bearer")
         user, token_or_error = tokenAuth.authenticate_credentials(auth_tok.split()[-1])
-    except KeyError as e:
+    except Exception as e:
         return (
             False,
             None,
