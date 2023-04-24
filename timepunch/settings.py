@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "oif83u989-ltbj0hg+bby5vo#=l&=c824mjc=q%it25r(gely%waec-vp@(a"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
 
@@ -36,11 +36,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.admindocs",
     "rest_framework",
     "rest_framework.authtoken",
     "auth_user",
     "time_log",
     "django_nose",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -152,7 +154,7 @@ NOSE_ARGS = [
     "--cover-package=auth_user, time_log",
 ]
 
-# Security config
+# # Security config
 SECURE_HSTS_SECONDS = 5
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
