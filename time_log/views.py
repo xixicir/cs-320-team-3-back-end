@@ -41,48 +41,40 @@ class LogTime(APIView):
             })
     @guarantee_auth
     def post(self, request, user: CustomAccount):
-        request_params = request.data
+        from datetime import datetime
 
+        request_params = request.data
         try:
-            dt_logged = (
-                date.today()
-                if "date_logged" not in request_params
-                else datetime.strptime(request_params["date_logged"], "%Y-%m-%d")
-            )
+            print(request_params["start"])
+            print(request_params["end"])
+            start_dt = datetime.strptime(request_params["start"], "%Y-%m-%dT%H:%M:%S.%fZ")
+            end_dt = datetime.strptime(request_params["end"], "%Y-%m-%dT%H:%M:%S.%fZ")
+            start_time = start_dt.time()
+            end_time = end_dt.time()
         except ValueError:
             return JsonResponse(
                 {
                     "log_created": False,
-                    "errors": "date_logged is not in correct format (yyyy-mm-dd)",
+                    "errors": "The provided start and/or end time(s) are not in the correct format, please use: 'start' and 'end' (YYYY-MM-DDTHH:MM:SS.mmmZ)",
                 },
                 status=422,
             )
 
-        duplicate_logs = TimeEntry.objects.filter(user=user, date_logged=dt_logged)
-        if duplicate_logs.exists():
+        if start_dt >= end_dt:
             return JsonResponse(
                 {
                     "log_created": False,
-                    "errors": f"time log for date {dt_logged} already exists",
-                },
-                status=422,
-            )
-
-        if "num_hours" not in request_params:
-            return JsonResponse(
-                {
-                    "log_created": False,
-                    "errors": "num_hours not provided in request",
+                    "errors": "The start time must be earlier than the end time.",
                 },
                 status=422,
             )
 
         cur_entry = TimeEntry(
-            user=user,
-            pay_rate=user.pay_rate,
-            num_hours=request_params["num_hours"],
-            date_logged=dt_logged,
-        )
+                user=user,
+                start_time=start_dt.isoformat(),
+                end_time=end_dt.isoformat(),
+                pay_rate=user.pay_rate,
+            )
         cur_entry.save()
 
         return JsonResponse(
@@ -171,8 +163,8 @@ def get_time_logs(list_users: List[CustomAccount]):
                 "time_entries": [
                     {
                         "pay_rate": t.pay_rate,
-                        "date_logged": t.date_logged,
-                        "num_hours": t.num_hours,
+                        "start": t.start_time,
+                        "end": t.end_time,
                     }
                     for t in time_logs
                 ],
