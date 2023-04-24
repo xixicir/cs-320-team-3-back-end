@@ -68,19 +68,6 @@ curl -X 'POST' \
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
           -d '{
-          "email_address": "john.doe@gmail.com",
-          "password": "passwordThis123",
-          "pay_rate": 45,
-          "company": "google",
-          "first_name": "John",
-          "last_name": "Doe"
-}'
-
-curl -X 'POST' \
-          'http://127.0.0.1:8080/account/create' \
-          -H 'accept: application/json' \
-          -H 'Content-Type: application/json' \
-          -d '{
           "email_address": "jason.boe@gmail.com",
           "password": "passwordThis123",
           "pay_rate": 35,
@@ -89,27 +76,14 @@ curl -X 'POST' \
           "last_name": "Boe"
 }'
 
-curl -X 'POST' \
-          'http://127.0.0.1:8080/account/create' \
-          -H 'accept: application/json' \
-          -H 'Content-Type: application/json' \
-          -d '{
-          "email_address": "jason.boe@gmail.com",
-          "password": "passwordThis123",
-          "pay_rate": 35,
-          "company": "apple",
-          "first_name": "Jason",
-          "last_name": "Boe"
-}'
-
-
-export TOKEN=$(curl -X POST  "http://127.0.0.1:8080/account/login" \
+export TOKEN=$(curl -X 'POST' \
+          'http://127.0.0.1:8080/account/login' \
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
           -d '{
           "email_address": "john.doe@gmail.com",
           "password": "passwordThis123"
-}' | jq ".token" -r)
+        }' | jq -r .token)
 
 # After running simulate_workflow/generate_users.py
 export TOKEN=$(curl -X 'POST' \

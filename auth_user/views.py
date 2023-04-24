@@ -9,7 +9,6 @@ from functools import reduce
 import operator
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-<<<<<<< HEAD
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.forms.models import model_to_dict
@@ -31,15 +30,8 @@ unauth_res = openapi.Schema(
             type=openapi.TYPE_STRING),
     },
     description='Error response for unauthorized access')
-||||||| parent of 09160ef (Resolved conflicts)
-=======
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
->>>>>>> 09160ef (Resolved conflicts)
-
 
 class CreateAccount(APIView):
-<<<<<<< HEAD
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -89,20 +81,6 @@ class CreateAccount(APIView):
                     'errors': openapi.Schema(type=openapi.TYPE_STRING),
                 }),
             })
-||||||| parent of 09160ef (Resolved conflicts)
-=======
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'email_address': openapi.Schema(type=openapi.TYPE_STRING, description='Email address'),
-            'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password'),
-            'pay_rate': openapi.Schema(type=openapi.TYPE_NUMBER, description='Pay rate per hour'),
-            'company': openapi.Schema(type=openapi.TYPE_STRING, description='Company'),
-            'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
-            'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
-        }),
-                         responses={200: CustomAccountSerializer, 400: 'Bad Request'})
->>>>>>> 09160ef (Resolved conflicts)
     def post(self, request):
         request_params = request.data
         try:
