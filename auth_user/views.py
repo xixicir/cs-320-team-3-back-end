@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from rest_framework.authtoken.models import Token
-from auth_user.models import CustomAccount, CustomAccountSerializer
+from auth_user.models import CustomAccount
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login
 import json
