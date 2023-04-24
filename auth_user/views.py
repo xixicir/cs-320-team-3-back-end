@@ -31,7 +31,6 @@ unauth_res = openapi.Schema(
     },
     description='Error response for unauthorized access')
 
-
 class CreateAccount(APIView):
     @swagger_auto_schema(
         request_body=openapi.Schema(
@@ -387,6 +386,7 @@ class EmployeePay(APIView):
                 }),
             401: unauth_res},
         )
+
     @guarantee_auth
     def post(self, request, user: CustomAccount):
         params = request.data
