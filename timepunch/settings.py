@@ -164,7 +164,7 @@ NOSE_ARGS = [
     "--cover-package=auth_user, time_log",
 ]
 
-# Security config
+# # Security config
 SECURE_HSTS_SECONDS = 5
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
