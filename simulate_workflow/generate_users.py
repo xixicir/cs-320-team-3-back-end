@@ -5,7 +5,7 @@ from random import randint
 from tqdm import tqdm
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 
 HOST_IP = "http://127.0.0.1:8080"
 
@@ -19,6 +19,11 @@ def get_random_rate():
 def get_hour_diff(diff):
     days, seconds = diff.days, diff.seconds
     return days * 24 + seconds // 3600
+
+
+def strp_delta(s):
+    hr, min, sec = map(float, s.split(":"))
+    return timedelta(hours=hr, minutes=min, seconds=sec)
 
 
 def register_user(user_dt):
@@ -63,9 +68,9 @@ def add_employees(manager_token, list_employees):
     resp.raise_for_status()
 
 
-def add_time_log(usr_token, dt_worked, hours_worked):
+def add_time_log(usr_token, start_dt, end_dt):
     headers["Authorization"] = f"Bearer {usr_token}"
-    data = {"num_hours": hours_worked, "date_logged": dt_worked}
+    data = {"start": start_dt, "end": end_dt}
     requests.post(f"{HOST_IP}/time/log", headers=headers, data=json.dumps(data))
 
 
@@ -99,32 +104,32 @@ def add_all_info(limit):
         if not time_entry:
             continue
         for t_entry in time_entry["timeEntries"]:
-            dt_worked = ""
-            hrs_worked = 0
+            dt_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+            dt_start = dt_end = ""
 
-            for k in t_entry:
-                match k:
-                    case "date":
-                        dt_worked = t_entry["date"]
-                    case "hoursWorked":
-                        hrs_worked = t_entry["hoursWorked"]
-                    case "clockedIn":
-                        FMT = "%H:%M:%S"
-                        tdelta = datetime.strptime(
-                            t_entry["clockedOut"], FMT
-                        ) - datetime.strptime(t_entry["clockedIn"], FMT)
-                        hrs_worked += get_hour_diff(tdelta)
-                    case "clockedInEpochMillisecond":
-                        dt_in = datetime.fromtimestamp(
-                            int(t_entry["clockedInEpochMillisecond"]) / 1000.0
-                        )
-                        dt_out = datetime.fromtimestamp(
-                            int(t_entry["clockedOutEpochMillisecond"]) / 1000.0
-                        )
-                        hrs_worked = get_hour_diff(dt_out - dt_in)
-                        dt_worked = dt_in.strftime("%Y-%m-%d")
+            if "date" in t_entry:
+                dt_start = datetime.strptime(t_entry["date"], "%Y-%m-%d")
 
-            add_time_log(list_tokens[i], dt_worked, hrs_worked)
+            if "hoursWorked" in t_entry:
+                dt_end = dt_start + timedelta(hours=t_entry["hoursWorked"])
+
+            if "clockedIn" in t_entry:
+                day = dt_start
+                dt_start = day + strp_delta(t_entry["clockedIn"])
+                dt_end = day + strp_delta(t_entry["clockedIn"])
+
+            if "clockedInEpochMillisecond" in t_entry:
+                dt_start = datetime.fromtimestamp(
+                    int(t_entry["clockedInEpochMillisecond"]) / 1000.0
+                )
+                dt_end = datetime.fromtimestamp(
+                    int(t_entry["clockedOutEpochMillisecond"]) / 1000.0
+                )
+
+            parsed_start, parsed_end = map(
+                lambda d: d.strftime(dt_format), (dt_start, dt_end)
+            )
+            add_time_log(list_tokens[i], parsed_start, parsed_end)
 
 
 add_all_info(limit=int(sys.argv[1]) if len(sys.argv) > 1 else 10**5)

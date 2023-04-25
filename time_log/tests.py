@@ -1,20 +1,22 @@
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.contrib.auth import get_user_model
+from django.test import TestCase
 from auth_user.models import CustomAccount
 from time_log.models import TimeEntry
 from datetime import date, datetime
-from rest_framework.authtoken.models import Token
 import json
+from datetime import timedelta
 
 
 class TestLogs(TestCase):
     def test_create_time_log_success(self):
         url = "http://127.0.0.1:8080/time/log"
-        data = {
-            "num_hours": 8,
-            "date_logged": str(date.today()),
-        }
+
+        dt_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+        dt_now = datetime.now()
+        start_dt = dt_now.strftime(dt_format)
+        end_dt = (dt_now + timedelta(hours=8)).strftime(dt_format)
+
+        data = {"start": start_dt, "end": end_dt}
+
         user_data = {
             "email_address": "testusertime@example.com",
             "password": "password123",
@@ -22,6 +24,7 @@ class TestLogs(TestCase):
             "first_name": "Test",
             "last_name": "User",
         }
+
         response = self.client.post(
             path="http://127.0.0.1:8080/account/create",
             data=json.dumps(user_data),
@@ -38,11 +41,7 @@ class TestLogs(TestCase):
             url, json.dumps(data), content_type="application/json", **headers
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            TimeEntry.objects.filter(
-                user=user, num_hours=8, date_logged=date.today()
-            ).exists()
-        )
+        self.assertTrue(TimeEntry.objects.filter(user=user, start_time=dt_now).exists())
         self.assertEqual(json.loads(response.content)["log_created"], True)
 
         # Get Time
@@ -52,7 +51,8 @@ class TestLogs(TestCase):
 
         t_entries = response.json().get("time_entries", [])
         self.assertTrue(
-            len(t_entries) == 1 and t_entries[0]["date_logged"] == data["date_logged"]
+            len(t_entries) == 1
+            and t_entries[0]["start"].split("T")[0] == data["start"].split("T")[0]
         )
 
         # Log Time again
