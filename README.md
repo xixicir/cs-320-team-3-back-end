@@ -123,7 +123,10 @@ curl -X 'POST' \
           -H "Authorization: Bearer $TOKEN" \
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
-          -d '{"num_hours": 8}'
+          -d '{
+            "start": "2022-08-28T04:35:35.455Z",
+            "end": "2022-08-28T09:36:35.455Z"
+          }'
 
 curl -X GET "http://127.0.0.1:8080/time/get" \
                 -H "Authorization: Bearer $TOKEN"
@@ -147,4 +150,10 @@ curl -X 'POST' \
 ```bash
 # Limit of 100 (providing no limit runs it on all datapoints)
 python simulate_workflow/generate_users.py 100
+```
+
+#### Unit testing
+
+```bash
+python manage.py test
 ```
