@@ -213,6 +213,29 @@ class VerifyAccount(APIView):
         )
 
 
+class ViewAccount(APIView):
+    @guarantee_auth
+    def get(self, request, user):
+        # Check permissions (if user is allowed to access this employee)
+        request_params = request.data
+
+        account = CustomAccount.objects.filter(
+            email_address=request_params.get("email_address", "")
+        )
+
+        if not account.exists():
+            return JsonResponse(
+                {"errors": "Please provide valid email address"},
+                status=422,
+            )
+
+        dict_user = model_to_dict(account.first(), exclude=["password"])
+        return JsonResponse(
+            dict_user,
+            status=200,
+        )
+
+
 class GetAccount(APIView):
     @guarantee_auth
     def get(self, request, user):

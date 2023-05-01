@@ -101,6 +101,11 @@ curl -H "Authorization: Bearer $TOKEN" \
 curl -H "Authorization: Bearer $TOKEN" \
                 "http://127.0.0.1:8080/account/get"
 
+curl -X GET "http://127.0.0.1:8080/account/view" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H 'Content-Type: application/json'\
+                -d '{"email_address": "john.doe@gmail.com"}'
+
 curl -X 'POST' \
           'http://127.0.0.1:8080/manager/add' \
           -H "Authorization: Bearer $TOKEN" \

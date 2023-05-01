@@ -24,6 +24,7 @@ from auth_user.views import (
     RemoveEmployees,
     GetEmployees,
     EmployeePay,
+    ViewAccount,
 )
 from time_log.views import LogTime, GetTime, GetEmployeeTime
 from rest_framework import permissions
@@ -65,6 +66,7 @@ urlpatterns = [
     path("account/login", LoginAccount.as_view()),
     path("account/verify", VerifyAccount.as_view()),
     path("account/get", GetAccount.as_view()),
+    path("account/view", ViewAccount.as_view()),
     path("manager/add", AddEmployees.as_view()),
     path("manager/remove", RemoveEmployees.as_view()),
     path("manager/get", GetEmployees.as_view()),
