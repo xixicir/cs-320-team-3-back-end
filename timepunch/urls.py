@@ -23,6 +23,7 @@ from auth_user.views import (
     AddEmployees,
     RemoveEmployees,
     GetEmployees,
+    GetAllEmployees,
     EmployeePay,
     ViewAccount,
 )
@@ -70,6 +71,7 @@ urlpatterns = [
     path("manager/add", AddEmployees.as_view()),
     path("manager/remove", RemoveEmployees.as_view()),
     path("manager/get", GetEmployees.as_view()),
+    path("manager/all", GetAllEmployees.as_view()),
     path("time/log", LogTime.as_view()),
     path("time/get", GetTime.as_view()),
     path("time/employees", GetEmployeeTime.as_view()),

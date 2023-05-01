@@ -373,6 +373,40 @@ class GetEmployees(APIView):
         )
 
 
+class GetAllEmployees(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[auth_param],
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "list_employees": openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(type=openapi.TYPE_STRING),
+                        description="list of employees under the user",
+                    )
+                },
+                description="If logged in successfully",
+            ),
+            400: "Bad Request",
+        },
+    )
+    @guarantee_auth
+    def get(self, request, user: CustomAccount):
+        list_employees = CustomAccount.objects.filter(company=user.company)
+
+        return JsonResponse(
+            {
+                "list_employees": list(
+                    map(
+                        lambda u: model_to_dict(u, exclude=["password"]), list_employees
+                    )
+                ),
+            },
+            status=200,
+        )
+
+
 def map_users(request_params, val, is_removed):
     list_emails = request_params.get("list_emails", [])
     if not list_emails:
