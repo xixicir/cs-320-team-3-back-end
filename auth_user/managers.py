@@ -12,7 +12,8 @@ class CustomUserManager(BaseUserManager):
         """
         Create and save a User with the given email and password.
         """
-        if not email_address:
+        # this is never reached since we try to use email address before calling this
+        if not email_address:  # pragma: no cover
             raise ValueError(_("The Email must be set"))
         email_address = self.normalize_email(email_address)
         user = self.model(email_address=email_address, **extra_fields)
@@ -20,7 +21,7 @@ class CustomUserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_superuser(self, email_address, password, **extra_fields):
+    def create_superuser(self, email_address, password, **extra_fields):  # pragma: no cover
         """
         Create and save a SuperUser with the given email and password.
         """

@@ -55,6 +55,21 @@ class TestBasic(TestCase):
             ),
             content_type="application/json",
         )
+        # Test Missing Email Address
+        self.assertEqual(response.status_code, 401)
+        response = self.client.post(
+            path="http://127.0.0.1:8080/account/create",
+            data=json.dumps(
+                {
+                    "password": "test",
+                    "first_name": "User",
+                    "last_name": "Name",
+                    "company": "Duck Creek",
+                    "pay_rate": 100,
+                }
+            ),
+            content_type="application/json",
+        )
         self.assertEqual(response.status_code, 401)
 
     def test_login_verify(self):
@@ -94,6 +109,14 @@ class TestBasic(TestCase):
             **headers,
         )
         self.assertEqual(response.status_code, 200)
+
+        # Verify no header
+        headers = {}
+        response = self.client.get(
+            "http://127.0.0.1:8080/account/verify",
+            **headers,
+        )
+        self.assertEqual(response.status_code, 401)
 
         # Incorrect Password
         response = self.client.post(
@@ -242,6 +265,30 @@ class TestBasic(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(json.loads(response.content)["user_modified"])
+
+        # Set Manager Pay, missing fields
+        headers = {"HTTP_Authorization": f"Bearer {TOKEN}"}
+        response = self.client.post(
+            "http://127.0.0.1:8080/employee/pay",
+            **headers,
+            data=json.dumps({}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 422)
+
+        # Set Manager Pay, invalid pay rate format
+        headers = {"HTTP_Authorization": f"Bearer {TOKEN}"}
+        response = self.client.post(
+            "http://127.0.0.1:8080/employee/pay",
+            **headers,
+            data=json.dumps(
+                {
+                    "pay_rate": "a string",
+                }
+            ),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 422)
 
         # Test Incorrect Token
         headers = {"HTTP_Authorization": f"Bearer {1234}"}

@@ -36,6 +36,24 @@ class TestLogs(TestCase):
         TOKEN = json.loads(response.content)["token"]
         headers = {"HTTP_Authorization": f"Bearer {TOKEN}"}
 
+        # Log Time, invalid format
+        response = self.client.post(
+            url, json.dumps({
+                "start": "asdf",
+                "end": "asdf",
+            }), content_type="application/json", **headers
+        )
+        self.assertEqual(response.status_code, 422)
+
+        # Log Time, time out of order
+        response = self.client.post(
+            url, json.dumps({
+                "start": end_dt,
+                "end": start_dt,
+            }), content_type="application/json", **headers
+        )
+        self.assertEqual(response.status_code, 422)
+
         # Log Time
         response = self.client.post(
             url, json.dumps(data), content_type="application/json", **headers
