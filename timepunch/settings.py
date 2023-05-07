@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
 from pathlib import Path
 from os import getenv
 import os
@@ -89,13 +88,14 @@ WSGI_APPLICATION = "timepunch.wsgi.application"
 
 db_type = getenv("DB_TYPE", "sqlite")
 db_host = getenv("DB_HOST", "localhost")
+db_pass = getenv("DB_PASS", "mypass")
 
 POSTGRES_CFG = {
     "ENGINE": "django.db.backends.postgresql",
     "NAME": "postgres",
     "USER": "postgres",
-    "PASSWORD": "mypass",
-    "HOST": f"{db_host}",
+    "HOST": db_host,
+    "PASSWORD": db_pass,
 }
 
 SQLITE_CFG = {
@@ -161,6 +161,7 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 # Tell nose to measure coverage on the 'foo' and 'bar' apps
 NOSE_ARGS = [
     "--with-coverage",
+    "--ignore-files=simulate_workflow/*",
     "--cover-package=auth_user, time_log",
 ]
 

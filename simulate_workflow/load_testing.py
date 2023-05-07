@@ -11,7 +11,11 @@ class DjangoUser(HttpUser):
     def on_start(self):
         self.email_address = fake.email()
         self.password = fake.password(
-            length=12, special_chars=True, digits=True, upper_case=True, lower_case=True
+            length=12,
+            special_chars=True,
+            digits=True,
+            upper_case=True,
+            lower_case=True,
         )
         self.pay_rate = fake.random.uniform(20, 50)
         self.company = fake.company()

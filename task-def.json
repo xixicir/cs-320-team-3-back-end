@@ -1,0 +1,48 @@
+{
+    "containerDefinitions": [
+        {
+            "essential": true,
+            "image": "<ecr_registry>/<project_name>",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/<project_name>-task-definition",
+                    "awslogs-region": "<aws_region>",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "name": "timepunch-backend",
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "DB_TYPE",
+                    "value": "postgres"
+                },
+                {
+                    "name": "DB_HOST",
+                    "value": "<db_host>"
+                },
+                {
+                    "name": "DB_PASS",
+                    "value": "<db_pass>"
+                }
+            ]
+        }
+    ],
+    "cpu": "256",
+    "executionRoleArn": "arn:aws:iam::<aws_account_id>:role/ecsTaskExecutionRole",
+    "family": "fargate-task-<project_name>",
+    "memory": "512",
+    "networkMode": "awsvpc",
+    "runtimePlatform": {
+        "operatingSystemFamily": "LINUX"
+    },
+    "requiresCompatibilities": ["FARGATE"]
+}

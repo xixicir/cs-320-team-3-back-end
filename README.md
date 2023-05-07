@@ -163,5 +163,11 @@ python simulate_workflow/generate_users.py 100
 #### Unit testing
 
 ```bash
-python manage.py test
+python -m gevent.monkey manage.py test
+```
+
+#### Load testing
+
+```bash
+locust -f simulate_workflow/load_testing.py --host http://127.0.0.1:8080
 ```
