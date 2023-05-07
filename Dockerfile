@@ -15,4 +15,4 @@ RUN pip3 install -r requirements.txt
 COPY . .
 EXPOSE 8080
 
-CMD [ "./start_service.sh" ]
+CMD [ "./scripts/start_service.sh" ]

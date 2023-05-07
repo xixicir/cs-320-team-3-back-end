@@ -42,7 +42,7 @@ export DB_HOST=localhost # or db
 python manage.py runserver 0.0.0.0:8080
 
 # Or start gunicorn server
-gunicorn -c service_cfg.py
+gunicorn -c scripts/service_cfg.py
 ```
 
 ### Testing
