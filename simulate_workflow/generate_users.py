@@ -62,10 +62,9 @@ def add_employees(manager_token, list_employees):
     headers["Authorization"] = f"Bearer {manager_token}"
     data = {"list_emails": list_employees}
 
-    resp = requests.post(
+    requests.post(
         f"{HOST_IP}/manager/add", headers=headers, data=json.dumps(data)
     )
-    resp.raise_for_status()
 
 
 def add_time_log(usr_token, start_dt, end_dt):

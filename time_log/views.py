@@ -9,6 +9,9 @@ from auth_user.utils import guarantee_auth
 from datetime import datetime, date
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.utils.timezone import make_aware
+from django.forms.models import model_to_dict
+
 
 from auth_user.views import auth_param, unauth_res
 
@@ -58,10 +61,12 @@ class LogTime(APIView):
         request_params = request.data
 
         try:
-            start_dt = datetime.strptime(
-                request_params["start"], "%Y-%m-%dT%H:%M:%S.%fZ"
+            start_dt = make_aware(
+                datetime.strptime(request_params["start"], "%Y-%m-%dT%H:%M:%S.%fZ")
             )
-            end_dt = datetime.strptime(request_params["end"], "%Y-%m-%dT%H:%M:%S.%fZ")
+            end_dt = make_aware(
+                datetime.strptime(request_params["end"], "%Y-%m-%dT%H:%M:%S.%fZ")
+            )
 
         except Exception:
             return JsonResponse(
@@ -186,21 +191,20 @@ def get_time_logs(list_users: List[CustomAccount]):
 
     for user in list_users:
         time_logs = TimeEntry.objects.filter(user=user)
-
-        list_info.append(
+        user_dict = model_to_dict(user, exclude=["password"])
+        user_dict["time_entries"] = [
             {
-                "email": user.email_address,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "time_entries": [
-                    {
-                        "pay_rate": t.pay_rate,
-                        "start": t.start_time,
-                        "end": t.end_time,
-                    }
-                    for t in time_logs
-                ],
+                "pay_rate": t.pay_rate,
+                "start": t.start_time,
+                "end": t.end_time,
             }
+            for t in time_logs
+        ]
+        user_dict["manager"] = (
+            "None"
+            if not user.manager
+            else f"{user.manager.first_name} {user.manager.last_name}"
         )
+        list_info.append(user_dict)
 
     return list_info
