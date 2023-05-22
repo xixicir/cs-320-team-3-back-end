@@ -43,9 +43,9 @@ python manage.py runserver 0.0.0.0:8080
 gunicorn -c scripts/service_cfg.py
 ```
 
-### Testing
+## Testing
 
-#### cURL calls
+### cURL calls
 
 ```bash
 curl -X 'POST' \
@@ -151,20 +151,20 @@ curl -X 'POST' \
           -d '{"pay_rate": 23.78}'
 ```
 
-#### JSON simulation
+### JSON simulation
 
 ```bash
 # Limit of 100 (providing no limit runs it on all datapoints)
 python simulate_workflow/generate_users.py 100
 ```
 
-#### Unit testing
+### Unit testing
 
 ```bash
 python -m gevent.monkey manage.py test
 ```
 
-#### Load testing
+### Load testing
 
 ```bash
 locust -f simulate_workflow/load_testing.py --host http://127.0.0.1:8080
