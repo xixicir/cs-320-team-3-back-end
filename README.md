@@ -1,6 +1,4 @@
-# Time Punch
-
-Brief description...
+# TimePunch Backend
 
 ## Installation
 
